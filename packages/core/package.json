@@ -1,0 +1,53 @@
+{
+  "name": "@ittijah/core",
+  "version": "0.1.0",
+  "description": "Rule engine for Ittijah — static analysis for RTL / bidirectional-text bugs.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schema.json": "./schema/ittijah.config.schema.json"
+  },
+  "files": [
+    "dist",
+    "schema"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernata-dev/ittijah.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "rtl",
+    "bidi",
+    "arabic",
+    "hebrew",
+    "i18n",
+    "lint",
+    "static-analysis"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@babel/parser": "^8.1.0",
+    "jsonc-parser": "^3.3.1",
+    "parse5": "^8.1.0",
+    "picomatch": "^4.0.7",
+    "postcss": "^8.5.32",
+    "postcss-scss": "^4.0.9",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@babel/types": "^8.1.0",
+    "@types/picomatch": "^4.0.3"
+  }
+}

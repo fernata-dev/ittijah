@@ -1,0 +1,44 @@
+{
+  "name": "ittijah",
+  "version": "0.1.0",
+  "description": "Find RTL and bidirectional-text bugs in Arabic/Hebrew-supporting apps — CSS, Tailwind, JSX, HTML and translation files.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ittijah": "./bin/ittijah.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernata-dev/ittijah.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "rtl",
+    "bidi",
+    "arabic",
+    "hebrew",
+    "i18n",
+    "lint",
+    "cli",
+    "tailwind",
+    "sarif"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@ittijah/core": "workspace:*",
+    "fast-glob": "^3.3.3",
+    "ignore": "^7.0.14",
+    "picocolors": "^1.1.1"
+  }
+}

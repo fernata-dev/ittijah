@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.validation-cache
+website/dist
+*.sarif
+.DS_Store

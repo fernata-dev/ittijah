@@ -1,0 +1,9 @@
+{
+  "follow": "تابعنا على @ittijah",
+  "course": "أتقن C++ في أسبوع واحد",
+  "temperature": "درجة الحرارة -5 درجات",
+  "support": "اتصل بنا على +20 100 123 4567",
+  "commented": "{name} علّق على منشورك.",
+  "deleted": "تم حذف {file}.",
+  "unread": "{count, plural, one {رسالة واحدة} other {# رسائل}}"
+}

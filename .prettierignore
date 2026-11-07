@@ -1,0 +1,5 @@
+dist
+pnpm-lock.yaml
+packages/*/test/fixtures
+validation
+website/dist
