@@ -140,6 +140,8 @@ export const missingDirAttribute: Rule<Options> = {
         .replace(/[_-]/g, " ")
         .replace(/([a-z])([A-Z])/g, "$1 $2");
       if (LTR_FIELD.test(ident)) return;
+      // "githubHandle" / "twitter_handle" name a field; "handleSearchChange" is an event handler.
+      if (/\b[Hh]andle\b(?! [A-Z])/.test(ident) || /(github|twitter|x|instagram|telegram|social)\s*(user|account|handle)/i.test(ident)) return;
       const what = isTextarea ? "<textarea>" : el.name === "input" ? `<input type="${attrStatic(el, "type") ?? "text"}">` : `contenteditable <${el.name}>`;
       ctx.report({
         message:

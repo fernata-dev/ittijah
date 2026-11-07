@@ -22,7 +22,7 @@
     203 |                                       )}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 2. jitsi-meet — `lang/main-he.json:417` — bidi-unsafe-string [leading-ltr]
 
@@ -36,7 +36,7 @@ Verdict: _TBD_
     419 |         "invitedThreePlusMembers": "{{name}}ו- {{count}} אחרים הוזמנו",
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 3. element-web — `apps/web/src/components/views/polls/pollHistory/PollListItem.tsx:40` — missing-dir-attribute
 
@@ -50,7 +50,7 @@ Verdict: _TBD_
      42 |             </AccessibleButton>
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 4. cal.com — `apps/web/modules/webhooks/views/webhook-form-header.tsx:38` — directional-icons
 
@@ -64,7 +64,7 @@ Verdict: _TBD_
      40 |         )}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 5. cal.com — `apps/web/modules/apps/components/AdminAppsList.tsx:348` — no-physical-properties
 
@@ -78,7 +78,7 @@ Verdict: _TBD_
     350 |         <SkeletonText className="h-8 w-full" />
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 6. element-web — `apps/web/src/i18n/strings/fa.json:1824` — bidi-unsafe-string [leading-ltr]
 
@@ -92,7 +92,7 @@ Verdict: _TBD_
    1826 |         },
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 7. cal.com — `packages/ui/components/form/select/Select.tsx:212` — missing-dir-attribute
 
@@ -106,7 +106,7 @@ Verdict: _TBD_
     214 |           autoComplete="off"
 ```
 
-Verdict: _TBD_
+Verdict: **FP** — invisible validation proxy input
 
 ### 8. cal.com — `apps/web/modules/onboarding/components/onboarding-migrate-members-browser-view.tsx:112` — no-physical-properties
 
@@ -120,7 +120,7 @@ Verdict: _TBD_
     114 |                       size="lg"
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 9. element-web — `apps/web/src/i18n/strings/he.json:1885` — bidi-unsafe-string [leading-ltr]
 
@@ -134,7 +134,7 @@ Verdict: _TBD_
    1887 |         },
 ```
 
-Verdict: _TBD_
+Verdict: TP — verified: reaches OS notifications via textForEvent
 
 ### 10. jitsi-meet — `react/features/speaker-stats/components/web/SpeakerStatsSearch.tsx:108` — missing-dir-attribute
 
@@ -148,7 +148,7 @@ Verdict: _TBD_
     110 |                 aria-label = { t('speakerStats.searchHint') }
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 11. excalidraw — `packages/excalidraw/components/ProjectName.scss:11` — no-physical-properties
 
@@ -162,7 +162,7 @@ Verdict: _TBD_
      13 | 
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 12. element-web — `apps/web/src/i18n/strings/fa.json:1767` — bidi-unsafe-string [leading-ltr]
 
@@ -176,7 +176,7 @@ Verdict: _TBD_
    1769 |             "unknown": "%(senderDisplayName)s دسترسی مهمانان را به %(rule)s تغییر داد"
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 13. jitsi-meet — `resources/waiting-queue/examples/visitor.html:2` — missing-dir-attribute
 
@@ -189,7 +189,7 @@ Verdict: _TBD_
       4 |     <title>Conference WebSocket</title>
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 14. element-web — `apps/web/res/css/components/views/location/_ZoomButtons.pcss:12` — no-physical-properties
 
@@ -203,7 +203,7 @@ Verdict: _TBD_
      14 |     flex-direction: column;
 ```
 
-Verdict: _TBD_
+Verdict: **FP** — map controls (debatable, counted against)
 
 ### 15. chatwoot — `app/javascript/dashboard/i18n/locale/ur_IN/integrations.json:297` — bidi-unsafe-string [leading-ltr]
 
@@ -217,7 +217,7 @@ Verdict: _TBD_
     299 |       "SUBTITLE": "آپ کے موجودہ مسودے کی بنیاد پر AI کے ذریعے بہتر جواب تیار کیا جائے گا۔",
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 16. cal.com — `apps/web/modules/onboarding/personal/settings/personal-settings-view.tsx:205` — missing-dir-attribute
 
@@ -231,7 +231,7 @@ Verdict: _TBD_
     207 |               </div>
 ```
 
-Verdict: _TBD_
+Verdict: **FP** — validation error message, not user content
 
 ### 17. element-web — `apps/web/res/css/views/dialogs/_AddExistingToSpaceDialog.pcss:183` — no-physical-properties
 
@@ -245,7 +245,7 @@ Verdict: _TBD_
     185 |                 color: $accent;
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 18. element-web — `apps/web/src/i18n/strings/fa.json:967` — bidi-unsafe-string [leading-ltr]
 
@@ -259,7 +259,7 @@ Verdict: _TBD_
     969 |     "onboarding": {
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 19. excalidraw — `packages/excalidraw/components/TTDDialog/TTDDialogInput.tsx:117` — missing-dir-attribute
 
@@ -273,7 +273,7 @@ Verdict: _TBD_
     119 |         onChange={(e) => onChange(e.target.value)}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 20. cal.com — `apps/web/modules/event-types/views/event-types-listing-view.tsx:227` — no-physical-properties
 
@@ -287,7 +287,7 @@ Verdict: _TBD_
     229 |           <div>
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 21. element-web — `apps/web/src/i18n/strings/fa.json:1756` — bidi-unsafe-string [leading-ltr]
 
@@ -301,7 +301,7 @@ Verdict: _TBD_
    1758 |             "changed_main_and_alternative": "%(senderName)s آدرس اصلی و جایگزین این اتاق را تغییر داد.",
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 22. element-web — `apps/web/src/components/views/polls/PollOption.tsx:28` — missing-dir-attribute
 
@@ -315,7 +315,7 @@ Verdict: _TBD_
      30 |                 {isWinner && <TrophyIcon className="mx_PollOption_winnerIcon" />}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 23. cal.com — `apps/web/modules/event-types/components/locations/Locations.tsx:289` — no-physical-properties
 
@@ -329,7 +329,7 @@ Verdict: _TBD_
     291 |                       )}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 24. element-web — `apps/web/src/i18n/strings/fa.json:1750` — bidi-unsafe-string [leading-ltr]
 
@@ -343,7 +343,7 @@ Verdict: _TBD_
    1752 |             "alt_removed": {
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 25. jitsi-meet — `react/features/salesforce/components/web/SalesforceLinkDialog.tsx:127` — missing-dir-attribute
 
@@ -357,7 +357,7 @@ Verdict: _TBD_
     129 |                 autoFocus = { true }
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 26. cal.com — `apps/web/modules/bookings/components/AvailableTimesHeader.tsx:57` — no-physical-properties
 
@@ -371,7 +371,7 @@ Verdict: _TBD_
      59 |             isMonthView
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 27. element-web — `apps/web/src/i18n/strings/he.json:2014` — bidi-unsafe-string [leading-ltr]
 
@@ -385,7 +385,7 @@ Verdict: _TBD_
    2016 |             "removed_rule_users": "%(senderName)s הסיר את הכלל שחוסם משתמשים התואמים ל %(glob)s",
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 
 ### 28. excalidraw — `packages/excalidraw/components/PublishLibrary.tsx:196` — missing-dir-attribute
 
@@ -399,7 +399,7 @@ Verdict: _TBD_
     198 |             ref={inputRef}
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 29. element-web — `apps/web/res/css/views/dialogs/_TermsDialog.pcss:22` — no-physical-properties
 
@@ -413,7 +413,7 @@ Verdict: _TBD_
      24 | 
 ```
 
-Verdict: _TBD_
+Verdict: TP
 
 ### 30. element-web — `apps/web/src/i18n/strings/he.json:2053` — bidi-unsafe-string [leading-ltr]
 
@@ -427,5 +427,5 @@ Verdict: _TBD_
    2055 |             },
 ```
 
-Verdict: _TBD_
+Verdict: **FP**
 

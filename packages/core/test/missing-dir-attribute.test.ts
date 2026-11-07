@@ -30,6 +30,7 @@ testRule(rule, {
     { name: "SMS token input", filename: "a.tsx", code: 'const A = () => <input type="text" className="msisdnEntry" value={this.state.token} onChange={this.onTokenChange} />;' },
     { name: "validation error is not user content", filename: "a.tsx", code: 'const A = () => <p className="text-error">{form.formState.errors.bio.message}</p>;' },
     { name: "error box is not user content", filename: "a.tsx", code: 'const A = () => <div className="chat-message__error">{message.content}</div>;' },
+    { name: "social handle fields are LTR", filename: "a.tsx", code: 'const A = () => <input type="text" value={libraryData.githubHandle} placeholder={t("publishDialog.placeholder.githubHandle")} />;' },
     { name: "disabled via options", filename: "a.tsx", code: "const A = () => <textarea />;", options: { checkInputs: false } },
   ],
   invalid: [
@@ -45,6 +46,8 @@ testRule(rule, {
     { name: "textarea", filename: "a.tsx", code: "const A = () => <textarea rows={3} />;", errors: ["<textarea> has no dir"], output: 'const A = () => <textarea dir="auto" rows={3} />;' },
     { name: "contenteditable", filename: "a.html", code: "<div contenteditable>edit me</div>", errors: ["contenteditable"], output: '<div dir="auto" contenteditable>edit me</div>' },
     { name: "comment body", filename: "a.tsx", code: "const A = ({ comment }) => <p className=\"x\">{comment.body}</p>;", errors: ["comment.body"], output: 'const A = ({ comment }) => <p dir="auto" className="x">{comment.body}</p>;' },
+    { name: "handler names like handleSearchChange do not hide a search input", filename: "a.tsx", code: 'const A = () => <input name="salesforceSearch" onChange={handleSearchChange} />;', errors: 1, output: 'const A = () => <input dir="auto" name="salesforceSearch" onChange={handleSearchChange} />;' },
+    { name: "class names containing 'port'/'card' do not hide an input", filename: "a.tsx", code: 'const A = () => <input className="report-card-title" />;', errors: 1, output: 'const A = () => <input dir="auto" className="report-card-title" />;' },
     { name: "chat message with optional chaining", filename: "a.tsx", code: "const A = ({ m }) => <div>{message?.text}</div>;", errors: 1, output: 'const A = ({ m }) => <div dir="auto">{message?.text}</div>;' },
     { name: "user bio", filename: "a.tsx", code: "const A = ({ user }) => <span>{user.bio}</span>;", errors: 1, output: 'const A = ({ user }) => <span dir="auto">{user.bio}</span>;' },
     { name: "dangerouslySetInnerHTML with post content", filename: "a.tsx", code: "const A = ({ post }) => <article dangerouslySetInnerHTML={{ __html: post.content }} />;", errors: 1, output: 'const A = ({ post }) => <article dir="auto" dangerouslySetInnerHTML={{ __html: post.content }} />;' },

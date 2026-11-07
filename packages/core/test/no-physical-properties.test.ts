@@ -25,6 +25,8 @@ testRule(rule, {
     { name: "generated RTL stylesheet", filename: "dist/app.rtl.css", code: ".a { margin-left: 8px; }" },
     { name: "build-time flipping (rtlcss) detected", filename: "a.css", code: ".a { margin-left: 8px; }", project: { buildTimeFlip: "rtlcss" } },
     { name: "@supports not fallback", filename: "a.css", code: "@supports not (margin-inline-start: 0) { .a { margin-left: 8px; } }" },
+    { name: "selector names a physical placement (jitsi popover)", filename: "a.scss", code: ".popover { .arrow { &.right { left: 4px; } } }" },
+    { name: "BEM modifier names the side", filename: "a.css", code: ".tooltip--left { right: 100%; } .label_right { float: right; } [data-side='right'] { margin-left: 4px; }" },
     { name: "custom properties named like physical ones", filename: "a.scss", code: ".a { --margin-left: 8px; $padding-left: 4px; }" },
     // --- Tailwind ---
     { name: "Tailwind not installed: classes are not Tailwind", filename: "a.tsx", code: 'const A = () => <div className="ml-4 text-left" />;' },
@@ -58,6 +60,7 @@ testRule(rule, {
     { name: "asymmetric pair is reported", filename: "a.css", code: ".a { margin-left: 4px; margin-right: 8px; }", errors: 2, output: ".a { margin-inline-start: 4px; margin-inline-end: 8px; }" },
     { name: "padding-left: 0 does not reset the UA padding-inline-start in RTL", filename: "a.css", code: "ul { padding-left: 0; }", errors: 1, output: "ul { padding-inline-start: 0; }" },
     { name: "SCSS nesting", filename: "a.scss", code: ".card {\n  .icon { margin-right: $gap; }\n}", errors: 1, output: ".card {\n  .icon { margin-inline-end: $gap; }\n}" },
+    { name: "side words inside longer identifiers do not count", filename: "a.css", code: ".bright .copyright { padding-left: 2px; }", errors: 1, output: ".bright .copyright { padding-inline-start: 2px; }" },
     { name: "uppercase property", filename: "a.css", code: ".a { MARGIN-LEFT: 2px; }", errors: 1, output: ".a { margin-inline-start: 2px; }" },
     { name: "unrelated [dir] rule elsewhere: reported but not auto-fixed", filename: "a.css", code: '.a { margin-left: 8px; }\n[dir="rtl"] .b { margin-right: 2px; }', errors: 1 },
     { name: "<style> block in HTML", filename: "a.html", code: "<style>\n.a { left: 3px; }\n</style>", errors: 1, output: "<style>\n.a { inset-inline-start: 3px; }\n</style>" },

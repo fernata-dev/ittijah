@@ -239,6 +239,13 @@ function isRtlIgnored(decl: Declaration, info: RootInfo): boolean {
   return false;
 }
 
+export function namesPhysicalSide(selector: string): boolean {
+  return selector
+    .split(/[\s>+~,.#:[\]()="'&*^$|]+/)
+    .flatMap((t) => t.split(/[-_]+/))
+    .some((t) => /^(left|right)$/i.test(t));
+}
+
 const norm = (v: string) => v.replace(/\s+/g, " ").trim().toLowerCase();
 
 function siblingsOf(decl: Declaration): Declaration[] {
@@ -296,6 +303,10 @@ export const noPhysicalProperties: Rule<Options> = {
       if (/@supports\s+not\b/i.test(chain)) return;
       if (isRtlIgnored(decl, info)) return;
       const parentRule = decl.parent?.type === "rule" ? (decl.parent as CssRule) : null;
+      // `.popover.right { left: 4px }`, `.label_left`, `[data-side="right"]`: the selector names a
+      // physical side, so the author is deliberately physical (often a placement computed by a
+      // positioning library). Converting it would break it in RTL.
+      if (parentRule && namesPhysicalSide(parentRule.selector)) return;
       if (parentRule && info.overridden.has(stripDir(resolvedSelector(parentRule)))) return;
 
       const siblings = siblingsOf(decl);

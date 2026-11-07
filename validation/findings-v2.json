@@ -5,11 +5,11 @@
       "sha": "701b901",
       "why": "React/TS + SCSS, ships ar-SA and he-IL",
       "files": 898,
-      "ms": 1708,
-      "findings": 150,
+      "ms": 2125,
+      "findings": 151,
       "byRule": {
         "no-physical-properties": 129,
-        "missing-dir-attribute": 10,
+        "missing-dir-attribute": 11,
         "bidi-unsafe-string": 11
       },
       "parseErrors": 0,
@@ -20,7 +20,7 @@
       "sha": "2eb48ec",
       "why": "Next.js + Tailwind monorepo, ships ar and he",
       "files": 2601,
-      "ms": 1744,
+      "ms": 2174,
       "findings": 490,
       "byRule": {
         "no-physical-properties": 486,
@@ -35,11 +35,11 @@
       "sha": "ab58977",
       "why": "React + SCSS, ships main-ar.json and main-he.json",
       "files": 2442,
-      "ms": 1132,
-      "findings": 89,
+      "ms": 1414,
+      "findings": 90,
       "byRule": {
         "no-physical-properties": 83,
-        "missing-dir-attribute": 6
+        "missing-dir-attribute": 7
       },
       "parseErrors": 1,
       "notices": []
@@ -49,11 +49,11 @@
       "sha": "f0211b9",
       "why": "React + PostCSS, ships ar and he",
       "files": 2711,
-      "ms": 2177,
-      "findings": 494,
+      "ms": 2731,
+      "findings": 496,
       "byRule": {
         "no-physical-properties": 480,
-        "missing-dir-attribute": 5,
+        "missing-dir-attribute": 7,
         "bidi-unsafe-string": 9
       },
       "parseErrors": 2,
@@ -64,7 +64,7 @@
       "sha": "625d596",
       "why": "Tailwind + SCSS + JSON locales (Vue templates are out of scope)",
       "files": 4098,
-      "ms": 874,
+      "ms": 936,
       "findings": 21,
       "byRule": {
         "bidi-unsafe-string": 10,
@@ -1178,6 +1178,18 @@
       "message": "\"margin-left\" is physical: in RTL it stays on the left. Use \"margin-inline-start\".",
       "text": "margin-left",
       "context": "    295 |     &__cursor {\n    296 |       display: inline-block;\n>   297 |       margin-left: 2px;\n    298 |       color: currentColor;\n    299 |       animation: blink 1s infinite;"
+    },
+    {
+      "repo": "excalidraw",
+      "sha": "701b901",
+      "file": "packages/excalidraw/components/TTDDialog/Chat/ChatInterface.tsx",
+      "line": 154,
+      "column": 14,
+      "ruleId": "missing-dir-attribute",
+      "check": null,
+      "message": "<textarea> has no dir attribute, so typed text always follows the page direction. Text in the other direction (English in an Arabic UI, Arabic in an English UI) is aligned to the wrong edge and its punctuation jumps: \"Hello!\" shows as \"!Hello\". Add dir=\"auto\" so the field follows what the user types.",
+      "text": "textarea",
+      "context": "    152 |             }}\n    153 |           >\n>   154 |             <textarea\n    155 |               ref={textareaRef}\n    156 |               autoFocus"
     },
     {
       "repo": "excalidraw",
@@ -8778,6 +8790,18 @@
     {
       "repo": "jitsi-meet",
       "sha": "ab58977",
+      "file": "react/features/salesforce/components/web/SalesforceLinkDialog.tsx",
+      "line": 127,
+      "column": 14,
+      "ruleId": "missing-dir-attribute",
+      "check": null,
+      "message": "<input type=\"text\"> has no dir attribute, so typed text always follows the page direction. Text in the other direction (English in an Arabic UI, Arabic in an English UI) is aligned to the wrong edge and its punctuation jumps: \"Hello!\" shows as \"!Hello\". Add dir=\"auto\" so the field follows what the user types.",
+      "text": "input",
+      "context": "    125 |                 color = { theme.palette.icon03 }\n    126 |                 src = { IconSearch } />\n>   127 |             <input\n    128 |                 autoComplete = 'off'\n    129 |                 autoFocus = { true }"
+    },
+    {
+      "repo": "jitsi-meet",
+      "sha": "ab58977",
       "file": "react/features/speaker-stats/components/web/SpeakerStatsSearch.tsx",
       "line": 108,
       "column": 14,
@@ -14414,6 +14438,30 @@
       "message": "\"left\" is physical: in RTL it stays on the left. Use \"inset-inline-start\".",
       "text": "left",
       "context": "     48 |     .mx_VideoFeed_mic {\n     49 |         position: absolute;\n>    50 |         left: 6px;\n     51 |         bottom: 6px;\n     52 |         z-index: 1;"
+    },
+    {
+      "repo": "element-web",
+      "sha": "f0211b9",
+      "file": "apps/web/src/components/views/dialogs/DeclineAndBlockInviteDialog.tsx",
+      "line": 71,
+      "column": 22,
+      "ruleId": "missing-dir-attribute",
+      "check": null,
+      "message": "<textarea> has no dir attribute, so typed text always follows the page direction. Text in the other direction (English in an Arabic UI, Arabic in an English UI) is aligned to the wrong edge and its punctuation jumps: \"Hello!\" shows as \"!Hello\". Add dir=\"auto\" so the field follows what the user types.",
+      "text": "textarea",
+      "context": "     69 |                         {_t(\"room_settings|permissions|ban_reason\")}\n     70 |                     </Label>\n>    71 |                     <textarea\n     72 |                         id=\"mx_DeclineAndBlockInviteDialog_reason\"\n     73 |                         className=\"mx_RoomReportTextArea\""
+    },
+    {
+      "repo": "element-web",
+      "sha": "f0211b9",
+      "file": "apps/web/src/components/views/dialogs/ReportRoomDialog.tsx",
+      "line": 80,
+      "column": 22,
+      "ruleId": "missing-dir-attribute",
+      "check": null,
+      "message": "<textarea> has no dir attribute, so typed text always follows the page direction. Text in the other direction (English in an Arabic UI, Arabic in an English UI) is aligned to the wrong edge and its punctuation jumps: \"Hello!\" shows as \"!Hello\". Add dir=\"auto\" so the field follows what the user types.",
+      "text": "textarea",
+      "context": "     78 |                 <Field name=\"reason\">\n     79 |                     <Label htmlFor=\"mx_ReportRoomDialog_reason\">{_t(\"report_room|reason_label\")}</Label>\n>    80 |                     <textarea\n     81 |                         id=\"mx_ReportRoomDialog_reason\"\n     82 |                         rows={5}"
     },
     {
       "repo": "element-web",
