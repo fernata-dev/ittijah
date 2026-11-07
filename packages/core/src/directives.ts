@@ -9,8 +9,7 @@
  *
  * When rule ids are listed only those rules are suppressed; otherwise all rules are.
  */
-const DIRECTIVE =
-  /ittijah-(disable-next-line|disable-line|disable|enable)\b([^\n]*)/g;
+const DIRECTIVE = /ittijah-(disable-next-line|disable-line|disable|enable)\b([^\n]*)/g;
 
 export interface Suppressions {
   isSuppressed(line: number, ruleId: string): boolean;

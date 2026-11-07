@@ -25,9 +25,18 @@ export const sarif: Formatter = (results, ctx) => {
               shortDescription: { text: r.meta.description },
               fullDescription: { text: `${r.meta.description} ${r.meta.bug}` },
               helpUri: r.meta.docsUrl,
-              help: { text: `${r.meta.bug}\nDocs: ${r.meta.docsUrl}`, markdown: `${r.meta.bug}\n\n[Rule documentation](${r.meta.docsUrl})` },
-              defaultConfiguration: { level: r.meta.defaultSeverity === "error" ? "error" : "warning" },
-              properties: { tags: ["i18n", "rtl", "accessibility"], precision: "high", "problem.severity": r.meta.defaultSeverity === "error" ? "error" : "warning" },
+              help: {
+                text: `${r.meta.bug}\nDocs: ${r.meta.docsUrl}`,
+                markdown: `${r.meta.bug}\n\n[Rule documentation](${r.meta.docsUrl})`,
+              },
+              defaultConfiguration: {
+                level: r.meta.defaultSeverity === "error" ? "error" : "warning",
+              },
+              properties: {
+                tags: ["i18n", "rtl", "accessibility"],
+                precision: "high",
+                "problem.severity": r.meta.defaultSeverity === "error" ? "error" : "warning",
+              },
             })),
           },
         },
@@ -41,8 +50,16 @@ export const sarif: Formatter = (results, ctx) => {
             locations: [
               {
                 physicalLocation: {
-                  artifactLocation: { uri: relative(ctx.cwd, r.filePath).split("\\").join("/"), uriBaseId: "%SRCROOT%" },
-                  region: { startLine: d.line, startColumn: d.column, endLine: d.endLine, endColumn: Math.max(d.endColumn, d.column + (d.endLine === d.line ? 1 : 0)) },
+                  artifactLocation: {
+                    uri: relative(ctx.cwd, r.filePath).split("\\").join("/"),
+                    uriBaseId: "%SRCROOT%",
+                  },
+                  region: {
+                    startLine: d.line,
+                    startColumn: d.column,
+                    endLine: d.endLine,
+                    endColumn: Math.max(d.endColumn, d.column + (d.endLine === d.line ? 1 : 0)),
+                  },
                 },
               },
             ],
@@ -53,9 +70,15 @@ export const sarif: Formatter = (results, ctx) => {
                       description: { text: "Ittijah autofix" },
                       artifactChanges: [
                         {
-                          artifactLocation: { uri: relative(ctx.cwd, r.filePath).split("\\").join("/"), uriBaseId: "%SRCROOT%" },
+                          artifactLocation: {
+                            uri: relative(ctx.cwd, r.filePath).split("\\").join("/"),
+                            uriBaseId: "%SRCROOT%",
+                          },
                           replacements: d.fix.map((f) => ({
-                            deletedRegion: { charOffset: f.range[0], charLength: f.range[1] - f.range[0] },
+                            deletedRegion: {
+                              charOffset: f.range[0],
+                              charLength: f.range[1] - f.range[0],
+                            },
                             insertedContent: { text: f.text },
                           })),
                         },

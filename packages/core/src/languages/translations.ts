@@ -4,7 +4,16 @@
  */
 import { parseTree, type Node as JsonNode, type ParseError } from "jsonc-parser";
 import { isMap, isPair, isScalar, isSeq, parseAllDocuments, type Node as YamlNode } from "yaml";
-import { buildTextNodes, concatDecoded, decodeEscapes, hasRtl, pinned, plain, type Decoded, type TextNodeBase } from "../bidi/message.js";
+import {
+  buildTextNodes,
+  concatDecoded,
+  decodeEscapes,
+  hasRtl,
+  pinned,
+  plain,
+  type Decoded,
+  type TextNodeBase,
+} from "../bidi/message.js";
 import type { Emitter } from "./emitter.js";
 
 export interface TranslationOptions {
@@ -12,8 +21,22 @@ export interface TranslationOptions {
   arb: boolean;
 }
 
-function emitString(emit: Emitter, decoded: Decoded, range: [number, number], key: string, opts: TranslationOptions, markEncoding: TextNodeBase["markEncoding"]) {
-  const base: TextNodeBase = { kind: "translation", range, key, rtlLocale: opts.rtlLocale, firstStrongContext: true, markEncoding };
+function emitString(
+  emit: Emitter,
+  decoded: Decoded,
+  range: [number, number],
+  key: string,
+  opts: TranslationOptions,
+  markEncoding: TextNodeBase["markEncoding"],
+) {
+  const base: TextNodeBase = {
+    kind: "translation",
+    range,
+    key,
+    rtlLocale: opts.rtlLocale,
+    firstStrongContext: true,
+    markEncoding,
+  };
   for (const tn of buildTextNodes(decoded, "message", base)) if (hasRtl(tn.text)) emit.text(tn);
 }
 
@@ -35,7 +58,14 @@ export function walkJson(text: string, emit: Emitter, opts: TranslationOptions):
     } else if (node.type === "string") {
       const raw = text.slice(node.offset + 1, node.offset + node.length - 1);
       if (!hasRtl(raw) && !/\\u0[5-8]|\\u[fF][bBcCdDeE]/.test(raw)) return;
-      emitString(emit, decodeEscapes(raw, node.offset + 1), [node.offset, node.offset + node.length], path.join("."), opts, "escape");
+      emitString(
+        emit,
+        decodeEscapes(raw, node.offset + 1),
+        [node.offset, node.offset + node.length],
+        path.join("."),
+        opts,
+        "escape",
+      );
     }
   };
   visit(root, []);
@@ -65,7 +95,8 @@ export function walkYaml(text: string, emit: Emitter, opts: TranslationOptions):
         else if (node.type === "QUOTE_DOUBLE" && !raw.includes("\n")) {
           decoded = decodeEscapes(raw.slice(1, -1), start + 1);
           enc = "escape";
-        } else if (node.type === "QUOTE_SINGLE" && !raw.includes("\n") && !raw.includes("''")) decoded = plain(raw.slice(1, -1), start + 1);
+        } else if (node.type === "QUOTE_SINGLE" && !raw.includes("\n") && !raw.includes("''"))
+          decoded = plain(raw.slice(1, -1), start + 1);
         else decoded = pinned(value, start, valueEnd);
         emitString(emit, decoded, [start, valueEnd], path.join("."), opts, enc);
       }
@@ -85,7 +116,8 @@ export function walkPo(text: string, emit: Emitter, opts: TranslationOptions): v
     if (current.field === "msgid") msgid = current.parts.map((p) => p.text).join("");
     else if (current.field.startsWith("msgstr")) {
       const decoded = concatDecoded(current.parts);
-      if (hasRtl(decoded.text)) emitString(emit, decoded, [current.start, current.end], msgid, opts, "none");
+      if (hasRtl(decoded.text))
+        emitString(emit, decoded, [current.start, current.end], msgid, opts, "none");
     }
     current = null;
   };

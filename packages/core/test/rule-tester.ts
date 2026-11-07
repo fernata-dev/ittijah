@@ -25,7 +25,11 @@ export const TAILWIND: Partial<ProjectInfo> = {
 };
 
 function run(rule: Rule, c: ValidCase) {
-  const project: ProjectInfo = { ...DEFAULT_PROJECT, ...c.project, tailwind: { ...DEFAULT_PROJECT.tailwind, ...c.project?.tailwind } };
+  const project: ProjectInfo = {
+    ...DEFAULT_PROJECT,
+    ...c.project,
+    tailwind: { ...DEFAULT_PROJECT.tailwind, ...c.project?.tailwind },
+  };
   const result = lintText({
     text: c.code,
     filePath: c.filename,
@@ -50,18 +54,25 @@ export function testRule(rule: Rule, cases: { valid: ValidCase[]; invalid: Inval
       cases.invalid.forEach((c, i) => {
         it(c.name ?? `#${i + 1} ${c.filename}: ${c.code.slice(0, 60).replace(/\s+/g, " ")}`, () => {
           const r = run(rule, c);
-          if (typeof c.errors === "number") expect(r.diagnostics.length, r.diagnostics.map((d) => d.message).join("\n")).toBe(c.errors);
+          if (typeof c.errors === "number")
+            expect(r.diagnostics.length, r.diagnostics.map((d) => d.message).join("\n")).toBe(
+              c.errors,
+            );
           else {
-            expect(r.diagnostics.length, r.diagnostics.map((d) => d.message).join("\n")).toBe(c.errors.length);
+            expect(r.diagnostics.length, r.diagnostics.map((d) => d.message).join("\n")).toBe(
+              c.errors.length,
+            );
             c.errors.forEach((frag, k) => expect(r.diagnostics[k]!.message).toContain(frag));
           }
           for (const d of r.diagnostics) {
             expect(d.line).toBeGreaterThan(0);
             expect(d.range[1]).toBeGreaterThanOrEqual(d.range[0]);
           }
-          if (c.output !== undefined) expect(applyFixes(c.code, r.diagnostics).output).toBe(c.output);
+          if (c.output !== undefined)
+            expect(applyFixes(c.code, r.diagnostics).output).toBe(c.output);
           else expect(r.diagnostics.filter((d) => d.fix?.length).length).toBe(0);
-          if (c.suggestion !== undefined) expect(r.diagnostics[0]!.suggestions?.[0]?.fix[0]?.text).toBe(c.suggestion);
+          if (c.suggestion !== undefined)
+            expect(r.diagnostics[0]!.suggestions?.[0]?.fix[0]?.text).toBe(c.suggestion);
         });
       });
     });

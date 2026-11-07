@@ -49,7 +49,8 @@ export function loadConfig(cwd: string, explicitPath?: string): LoadedConfig {
     throw new ConfigError(`invalid JSON (${(e as Error).message})`, path);
   }
   const errors = validateConfig(parsed);
-  if (errors.length) throw new ConfigError(`invalid configuration:\n  - ${errors.join("\n  - ")}`, path);
+  if (errors.length)
+    throw new ConfigError(`invalid configuration:\n  - ${errors.join("\n  - ")}`, path);
   return { config: parsed as IttijahConfig, path, root: dirname(path) };
 }
 
@@ -69,8 +70,13 @@ function validateRules(value: unknown, where: string, errors: string[]): void {
       continue;
     }
     const sev = Array.isArray(setting) ? setting[0] : setting;
-    if (!SEVERITIES.has(sev as string)) errors.push(`${where}.${id}: severity must be "off", "warn" or "error"`);
-    if (Array.isArray(setting) && setting.length > 1 && (typeof setting[1] !== "object" || setting[1] === null || Array.isArray(setting[1])))
+    if (!SEVERITIES.has(sev as string))
+      errors.push(`${where}.${id}: severity must be "off", "warn" or "error"`);
+    if (
+      Array.isArray(setting) &&
+      setting.length > 1 &&
+      (typeof setting[1] !== "object" || setting[1] === null || Array.isArray(setting[1]))
+    )
       errors.push(`${where}.${id}: options must be an object`);
   }
 }
@@ -78,12 +84,16 @@ function validateRules(value: unknown, where: string, errors: string[]): void {
 /** Lightweight validation mirroring schema/ittijah.config.schema.json (no runtime deps). */
 export function validateConfig(value: unknown): string[] {
   const errors: string[] = [];
-  if (typeof value !== "object" || value === null || Array.isArray(value)) return ["configuration must be a JSON object"];
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    return ["configuration must be a JSON object"];
   const c = value as Record<string, unknown>;
   const allowed = new Set(["$schema", "rules", "ignore", "settings", "overrides"]);
   for (const k of Object.keys(c)) if (!allowed.has(k)) errors.push(`unknown property "${k}"`);
   if (c.rules !== undefined) validateRules(c.rules, "rules", errors);
-  if (c.ignore !== undefined && (!Array.isArray(c.ignore) || c.ignore.some((g) => typeof g !== "string")))
+  if (
+    c.ignore !== undefined &&
+    (!Array.isArray(c.ignore) || c.ignore.some((g) => typeof g !== "string"))
+  )
     errors.push(`"ignore" must be an array of glob strings`);
   if (c.settings !== undefined) {
     const s = c.settings as Record<string, unknown>;
@@ -93,7 +103,8 @@ export function validateConfig(value: unknown): string[] {
         if (["tailwind", "buildTimeFlip", "reactNative"].includes(k)) {
           if (!TRI(s[k])) errors.push(`settings.${k} must be "auto", true or false`);
         } else if (k === "iconSources") {
-          if (!Array.isArray(s[k]) || (s[k] as unknown[]).some((x) => typeof x !== "string")) errors.push(`settings.iconSources must be an array of strings`);
+          if (!Array.isArray(s[k]) || (s[k] as unknown[]).some((x) => typeof x !== "string"))
+            errors.push(`settings.iconSources must be an array of strings`);
         } else errors.push(`unknown setting "${k}"`);
       }
     }
@@ -103,15 +114,20 @@ export function validateConfig(value: unknown): string[] {
     else
       c.overrides.forEach((o: unknown, i: number) => {
         const ov = o as Record<string, unknown>;
-        if (!Array.isArray(ov?.files) || ov.files.some((f) => typeof f !== "string")) errors.push(`overrides[${i}].files must be an array of globs`);
+        if (!Array.isArray(ov?.files) || ov.files.some((f) => typeof f !== "string"))
+          errors.push(`overrides[${i}].files must be an array of globs`);
         if (ov?.rules !== undefined) validateRules(ov.rules, `overrides[${i}].rules`, errors);
       });
   }
   return errors;
 }
 
-function normalizeSetting(setting: RuleSetting): { severity: Severity; options?: Record<string, unknown> } {
-  if (Array.isArray(setting)) return { severity: setting[0], options: setting[1] as Record<string, unknown> | undefined };
+function normalizeSetting(setting: RuleSetting): {
+  severity: Severity;
+  options?: Record<string, unknown>;
+} {
+  if (Array.isArray(setting))
+    return { severity: setting[0], options: setting[1] as Record<string, unknown> | undefined };
   return { severity: setting };
 }
 
@@ -134,7 +150,11 @@ export function toPosix(p: string): string {
  * Effective rules for one file.
  * @param only restrict to these rule ids (CLI `--rule`); they are enabled even if "off".
  */
-export function resolveRulesForFile(loaded: LoadedConfig, absPath: string, only?: string[]): Map<string, ResolvedRuleConfig> {
+export function resolveRulesForFile(
+  loaded: LoadedConfig,
+  absPath: string,
+  only?: string[],
+): Map<string, ResolvedRuleConfig> {
   const rel = toPosix(relative(loaded.root, absPath));
   const map = new Map<string, ResolvedRuleConfig & { off?: boolean }>();
   for (const r of rules) map.set(r.meta.id, { severity: r.meta.defaultSeverity, options: {} });
@@ -144,7 +164,8 @@ export function resolveRulesForFile(loaded: LoadedConfig, absPath: string, only?
       const prev = map.get(bare);
       if (!prev) continue;
       const { severity, options } = normalizeSetting(setting);
-      if (severity === "off") map.set(bare, { ...prev, off: true, options: { ...prev.options, ...options } });
+      if (severity === "off")
+        map.set(bare, { ...prev, off: true, options: { ...prev.options, ...options } });
       else map.set(bare, { severity, options: { ...prev.options, ...options } });
     }
   };
@@ -153,7 +174,13 @@ export function resolveRulesForFile(loaded: LoadedConfig, absPath: string, only?
   const out = new Map<string, ResolvedRuleConfig>();
   for (const [id, conf] of map) {
     if (only?.length) {
-      if (only.includes(id)) out.set(id, { severity: conf.off ? rules.find((r) => r.meta.id === id)!.meta.defaultSeverity : conf.severity, options: conf.options });
+      if (only.includes(id))
+        out.set(id, {
+          severity: conf.off
+            ? rules.find((r) => r.meta.id === id)!.meta.defaultSeverity
+            : conf.severity,
+          options: conf.options,
+        });
     } else if (!conf.off) out.set(id, { severity: conf.severity, options: conf.options });
   }
   return out;

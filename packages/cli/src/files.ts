@@ -40,12 +40,16 @@ export interface DiscoveryOptions {
 
 function gitFiles(dir: string): string[] | null {
   try {
-    const out = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--deduplicate"], {
-      cwd: dir,
-      encoding: "utf8",
-      maxBuffer: 512 * 1024 * 1024,
-      stdio: ["ignore", "pipe", "ignore"],
-    });
+    const out = execFileSync(
+      "git",
+      ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--deduplicate"],
+      {
+        cwd: dir,
+        encoding: "utf8",
+        maxBuffer: 512 * 1024 * 1024,
+        stdio: ["ignore", "pipe", "ignore"],
+      },
+    );
     return out.split("\0").filter(Boolean);
   } catch {
     return null;
@@ -67,7 +71,11 @@ function globFiles(dir: string, useGitignore: boolean): string[] {
 }
 
 /** Resolve CLI path arguments to absolute file paths Ittijah can lint. */
-export function discoverFiles(paths: string[], cwd: string, opts: DiscoveryOptions): { files: string[]; missing: string[] } {
+export function discoverFiles(
+  paths: string[],
+  cwd: string,
+  opts: DiscoveryOptions,
+): { files: string[]; missing: string[] } {
   const out = new Set<string>();
   const missing: string[] = [];
   for (const p of paths) {

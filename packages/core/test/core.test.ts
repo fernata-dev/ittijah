@@ -3,8 +3,21 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { analyzeText, bidiClass } from "../src/bidi/analyze.js";
-import { buildTextNodes, decodeEscapes, ISOLATED, isNumericName, PH_NUMERIC, PH_UNKNOWN } from "../src/bidi/message.js";
-import { loadConfig, resolveRulesForFile, validateConfig, isIgnoredByConfig, ConfigError } from "../src/config.js";
+import {
+  buildTextNodes,
+  decodeEscapes,
+  ISOLATED,
+  isNumericName,
+  PH_NUMERIC,
+  PH_UNKNOWN,
+} from "../src/bidi/message.js";
+import {
+  loadConfig,
+  resolveRulesForFile,
+  validateConfig,
+  isIgnoredByConfig,
+  ConfigError,
+} from "../src/config.js";
 import { parseSuppressions } from "../src/directives.js";
 import { applyFixes, lintText } from "../src/engine.js";
 import { detectLanguage, isRtlLang, isRtlLocalePath } from "../src/languages/detect.js";
@@ -13,7 +26,13 @@ import { clearProjectCache, minVersion, resolveProjectInfo } from "../src/projec
 import schema from "../schema/ittijah.config.schema.json" with { type: "json" };
 import { rules } from "../src/rules/index.js";
 
-const base = { kind: "translation" as const, range: [0, 0] as [number, number], rtlLocale: true, firstStrongContext: true, markEncoding: "escape" as const };
+const base = {
+  kind: "translation" as const,
+  range: [0, 0] as [number, number],
+  rtlLocale: true,
+  firstStrongContext: true,
+  markEncoding: "escape" as const,
+};
 
 describe("bidi classes", () => {
   it("classifies strong, weak and neutral characters", () => {
@@ -60,13 +79,15 @@ describe("placeholder tokenization", () => {
     expect(one("50%% خصم")[0]!.text).toBe("50%% خصم");
   });
   it("recognizes numeric names", () => {
-    for (const n of ["count", "totalCount", "page", "conversationId", "order_id", "id"]) expect(isNumericName(n)).toBe(true);
+    for (const n of ["count", "totalCount", "page", "conversationId", "order_id", "id"])
+      expect(isNumericName(n)).toBe(true);
     for (const n of ["name", "user", "file", "brand"]) expect(isNumericName(n)).toBe(false);
   });
 });
 
 describe("analyzeText", () => {
-  const run = (t: string, firstStrong = false) => analyzeText(t, { firstStrong, rtlLocale: false }).map((f) => f.check);
+  const run = (t: string, firstStrong = false) =>
+    analyzeText(t, { firstStrong, rtlLocale: false }).map((f) => f.check);
   it("ignores LTR paragraphs", () => expect(run("Follow @x and C++ at -5 جدا")).toEqual([]));
   it("finds each check", () => {
     expect(run("تابع @x")).toEqual(["neutral-before-ltr"]);
@@ -75,7 +96,13 @@ describe("analyzeText", () => {
     expect(run("iPhone متوفر الآن", true)).toEqual(["leading-ltr"]);
   });
   it("respects per-check switches", () => {
-    expect(analyzeText("تابع @x", { firstStrong: false, rtlLocale: false, checks: { "neutral-before-ltr": false } })).toEqual([]);
+    expect(
+      analyzeText("تابع @x", {
+        firstStrong: false,
+        rtlLocale: false,
+        checks: { "neutral-before-ltr": false },
+      }),
+    ).toEqual([]);
   });
 });
 
@@ -96,8 +123,22 @@ describe("suppression comments", () => {
 
 describe("applyFixes", () => {
   it("skips overlapping fixes and applies from the end", () => {
-    const d = (a: number, b: number, text: string) => ({ ruleId: "x", severity: "error" as const, message: "", line: 1, column: 1, endLine: 1, endColumn: 1, range: [a, b] as [number, number], docsUrl: "", fix: [{ range: [a, b] as [number, number], text }] });
-    expect(applyFixes("abcdef", [d(0, 2, "XY"), d(1, 3, "!!"), d(4, 6, "Z")])).toEqual({ output: "XYcdZ", applied: 2 });
+    const d = (a: number, b: number, text: string) => ({
+      ruleId: "x",
+      severity: "error" as const,
+      message: "",
+      line: 1,
+      column: 1,
+      endLine: 1,
+      endColumn: 1,
+      range: [a, b] as [number, number],
+      docsUrl: "",
+      fix: [{ range: [a, b] as [number, number], text }],
+    });
+    expect(applyFixes("abcdef", [d(0, 2, "XY"), d(1, 3, "!!"), d(4, 6, "Z")])).toEqual({
+      output: "XYcdZ",
+      applied: 2,
+    });
   });
 });
 
@@ -121,7 +162,7 @@ describe("languages", () => {
     expect(isRtlLocalePath("src/components/header.json")).toBe(false);
   });
   it("reports parse errors instead of throwing", () => {
-    const r = lintText({ text: "{ \"a\": \"عربي @x\" ", filePath: "ar.json" });
+    const r = lintText({ text: '{ "a": "عربي @x" ', filePath: "ar.json" });
     expect(r.diagnostics.length + (r.parseError ? 1 : 0)).toBeGreaterThan(0);
   });
   it("LineIndex", () => {
@@ -134,14 +175,23 @@ describe("project detection", () => {
   it("reads tailwind version, rtlcss and react-native from package.json up the tree", () => {
     clearProjectCache();
     const dir = mkdtempSync(join(tmpdir(), "ittijah-"));
-    writeFileSync(join(dir, "package.json"), JSON.stringify({ devDependencies: { tailwindcss: "~3.3.2", rtlcss: "^4" } }));
+    writeFileSync(
+      join(dir, "package.json"),
+      JSON.stringify({ devDependencies: { tailwindcss: "~3.3.2", rtlcss: "^4" } }),
+    );
     mkdirSync(join(dir, "app"));
-    writeFileSync(join(dir, "app", "package.json"), JSON.stringify({ dependencies: { "react-native": "0.76.0" } }));
+    writeFileSync(
+      join(dir, "app", "package.json"),
+      JSON.stringify({ dependencies: { "react-native": "0.76.0" } }),
+    );
     const info = resolveProjectInfo(join(dir, "app", "x.tsx"));
     expect(info.tailwind).toMatchObject({ enabled: true, logical: true, logicalFloat: false });
     expect(info.buildTimeFlip).toBe("rtlcss");
     expect(info.reactNative).toBe(true);
-    expect(resolveProjectInfo(join(dir, "app", "y.tsx"), { buildTimeFlip: false, tailwind: false }).buildTimeFlip).toBeNull();
+    expect(
+      resolveProjectInfo(join(dir, "app", "y.tsx"), { buildTimeFlip: false, tailwind: false })
+        .buildTimeFlip,
+    ).toBeNull();
   });
   it("minVersion", () => {
     expect(minVersion("^3.4.1")).toEqual([3, 4]);
@@ -159,7 +209,11 @@ describe("config", () => {
     expect(validateConfig({ wat: 1 })[0]).toContain("unknown property");
   });
   it("schema and validator know the same rules", () => {
-    expect(Object.keys((schema as { definitions: { rules: { properties: object } } }).definitions.rules.properties).sort()).toEqual(rules.map((r) => r.meta.id).sort());
+    expect(
+      Object.keys(
+        (schema as { definitions: { rules: { properties: object } } }).definitions.rules.properties,
+      ).sort(),
+    ).toEqual(rules.map((r) => r.meta.id).sort());
   });
   it("loads, applies overrides, ignore and --rule", () => {
     const dir = mkdtempSync(join(tmpdir(), "ittijah-cfg-"));
@@ -174,9 +228,16 @@ describe("config", () => {
     const loaded = loadConfig(dir);
     const r = resolveRulesForFile(loaded, join(dir, "src/a.tsx"));
     expect(r.has("directional-icons")).toBe(false);
-    expect(r.get("bidi-unsafe-string")).toEqual({ severity: "warn", options: { leadingLtr: true } });
-    expect(resolveRulesForFile(loaded, join(dir, "emails/x.html")).has("no-physical-properties")).toBe(false);
-    expect([...resolveRulesForFile(loaded, join(dir, "a.css"), ["directional-icons"]).keys()]).toEqual(["directional-icons"]);
+    expect(r.get("bidi-unsafe-string")).toEqual({
+      severity: "warn",
+      options: { leadingLtr: true },
+    });
+    expect(
+      resolveRulesForFile(loaded, join(dir, "emails/x.html")).has("no-physical-properties"),
+    ).toBe(false);
+    expect([
+      ...resolveRulesForFile(loaded, join(dir, "a.css"), ["directional-icons"]).keys(),
+    ]).toEqual(["directional-icons"]);
     expect(isIgnoredByConfig(loaded, join(dir, "legacy/a.css"))).toBe(true);
     writeFileSync(join(dir, "bad.json"), "{ nope");
     expect(() => loadConfig(dir, "bad.json")).toThrow(ConfigError);

@@ -1,4 +1,10 @@
-import type { ClassListNode, CssDeclarationNode, ElementNode, StyleObjectNode, TextNode } from "../types.js";
+import type {
+  ClassListNode,
+  CssDeclarationNode,
+  ElementNode,
+  StyleObjectNode,
+  TextNode,
+} from "../types.js";
 
 /** Sink for normalized events produced by language adapters. */
 export interface Emitter {

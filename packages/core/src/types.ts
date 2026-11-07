@@ -126,8 +126,7 @@ export interface ClassListNode {
 }
 
 export type StyleValue =
-  | { kind: "static"; value: string | number; range: Range; quoted: boolean }
-  | { kind: "dynamic" };
+  { kind: "static"; value: string | number; range: Range; quoted: boolean } | { kind: "dynamic" };
 
 export interface StyleProp {
   key: string;

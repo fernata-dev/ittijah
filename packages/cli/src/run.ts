@@ -35,7 +35,9 @@ export interface RunResult {
 export function run(opts: RunOptions): RunResult {
   const started = performance.now();
   const config = loadConfig(opts.cwd, opts.configPath);
-  const { files, missing } = discoverFiles(opts.paths.length ? opts.paths : ["."], opts.cwd, { gitignore: opts.gitignore !== false });
+  const { files, missing } = discoverFiles(opts.paths.length ? opts.paths : ["."], opts.cwd, {
+    gitignore: opts.gitignore !== false,
+  });
   const results: LintResult[] = [];
   const sources = new Map<string, string>();
   const notices = new Set<string>();
@@ -80,5 +82,14 @@ export function run(opts: RunOptions): RunResult {
     }
   }
   for (const m of missing) notices.add(`Path not found: ${displayPath(m, opts.cwd)}`);
-  return { results, sources, filesScanned: scanned, fixedCount, notices: [...notices], missing, config, durationMs: performance.now() - started };
+  return {
+    results,
+    sources,
+    filesScanned: scanned,
+    fixedCount,
+    notices: [...notices],
+    missing,
+    config,
+    durationMs: performance.now() - started,
+  };
 }

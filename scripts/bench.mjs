@@ -13,7 +13,8 @@ const N = Number(process.argv[2] ?? 5000);
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const { run } = await import(join(ROOT, "packages/cli/dist/index.js"));
 
-const tsx = (i) => `import { ChevronRight } from "lucide-react";
+const tsx = (i) =>
+  `import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 export function Card${i}({ item, comment, onClick }: Props) {
   const [open, setOpen] = useState(false);
@@ -33,16 +34,31 @@ export function Card${i}({ item, comment, onClick }: Props) {
   );
 }
 `.repeat(3);
-const css = (i) => `.c${i} { display: flex; margin-left: 8px; padding-inline: 4px; }
+const css = (i) =>
+  `.c${i} { display: flex; margin-left: 8px; padding-inline: 4px; }
 .c${i}__title { font-weight: 600; text-align: left; }
 .c${i}__badge { position: absolute; top: 0; right: 0; }
 @media (max-width: 600px) { .c${i} { margin: 0 auto; } }
 `.repeat(10);
-const json = (i) => JSON.stringify(Object.fromEntries(Array.from({ length: 60 }, (_, k) => [`key_${i}_${k}`, k % 7 === 0 ? "تابعنا على @ittijah" : `نص عربي رقم ${k} مع {name} و {count}`])), null, 2);
-const html = (i) => `<!doctype html><html lang="ar" dir="rtl"><head><title>صفحة ${i}</title><style>.x{float:left}</style></head><body><main class="container"><p>مرحبا</p><input type="search"></main></body></html>`;
+const json = (i) =>
+  JSON.stringify(
+    Object.fromEntries(
+      Array.from({ length: 60 }, (_, k) => [
+        `key_${i}_${k}`,
+        k % 7 === 0 ? "تابعنا على @ittijah" : `نص عربي رقم ${k} مع {name} و {count}`,
+      ]),
+    ),
+    null,
+    2,
+  );
+const html = (i) =>
+  `<!doctype html><html lang="ar" dir="rtl"><head><title>صفحة ${i}</title><style>.x{float:left}</style></head><body><main class="container"><p>مرحبا</p><input type="search"></main></body></html>`;
 
 const dir = mkdtempSync(join(tmpdir(), "ittijah-bench-"));
-writeFileSync(join(dir, "package.json"), JSON.stringify({ devDependencies: { tailwindcss: "^4.1.0" } }));
+writeFileSync(
+  join(dir, "package.json"),
+  JSON.stringify({ devDependencies: { tailwindcss: "^4.1.0" } }),
+);
 for (let i = 0; i < N; i++) {
   const sub = join(dir, "src", `m${i % 50}`);
   mkdirSync(sub, { recursive: true });
@@ -56,7 +72,9 @@ const t0 = performance.now();
 const result = run({ paths: ["."], cwd: dir });
 const ms = performance.now() - t0;
 const findings = result.results.reduce((n, r) => n + r.diagnostics.length, 0);
-console.log(`${result.filesScanned} files, ${findings} findings in ${(ms / 1000).toFixed(2)} s (${(result.filesScanned / (ms / 1000)).toFixed(0)} files/s)`);
+console.log(
+  `${result.filesScanned} files, ${findings} findings in ${(ms / 1000).toFixed(2)} s (${(result.filesScanned / (ms / 1000)).toFixed(0)} files/s)`,
+);
 rmSync(dir, { recursive: true, force: true });
 if (ms > 10_000) {
   console.error("✖ slower than the 10 s budget");

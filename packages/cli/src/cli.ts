@@ -91,7 +91,9 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
   if (v["list-rules"]) {
     console.log("");
     for (const r of rules) {
-      console.log(`  ${pc.bold(r.meta.id.padEnd(24))} ${pc.dim(r.meta.defaultSeverity.padEnd(6))} ${r.meta.fixable ? pc.green("fixable") : pc.dim("       ")}  ${r.meta.description}`);
+      console.log(
+        `  ${pc.bold(r.meta.id.padEnd(24))} ${pc.dim(r.meta.defaultSeverity.padEnd(6))} ${r.meta.fixable ? pc.green("fixable") : pc.dim("       ")}  ${r.meta.description}`,
+      );
     }
     console.log("");
     return EXIT.OK;
@@ -99,10 +101,16 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
   if (v.explain) {
     const r = rules.find((x) => x.meta.id === v.explain);
     if (!r) {
-      console.error(pc.red(`✖ Unknown rule "${v.explain}". Known rules: ${rules.map((x) => x.meta.id).join(", ")}`));
+      console.error(
+        pc.red(
+          `✖ Unknown rule "${v.explain}". Known rules: ${rules.map((x) => x.meta.id).join(", ")}`,
+        ),
+      );
       return EXIT.FATAL;
     }
-    console.log(`\n  ${pc.bold(r.meta.id)}  ${pc.dim(`(${r.meta.defaultSeverity}${r.meta.fixable ? ", fixable" : ""})`)}\n`);
+    console.log(
+      `\n  ${pc.bold(r.meta.id)}  ${pc.dim(`(${r.meta.defaultSeverity}${r.meta.fixable ? ", fixable" : ""})`)}\n`,
+    );
     console.log(`  ${r.meta.description}\n`);
     console.log(`  ${pc.bold("The bug:")} ${r.meta.bug}\n`);
     console.log(`  ${pc.bold("Applies to:")} ${r.meta.languages.join(", ")}`);
@@ -129,10 +137,15 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
   const format = v.format ?? "pretty";
   const formatter = FORMATTERS[format];
   if (!formatter) {
-    console.error(pc.red(`✖ Unknown format "${format}". Use: ${Object.keys(FORMATTERS).join(", ")}.`));
+    console.error(
+      pc.red(`✖ Unknown format "${format}". Use: ${Object.keys(FORMATTERS).join(", ")}.`),
+    );
     return EXIT.FATAL;
   }
-  const only = (v.rule ?? []).flatMap((r) => r.split(",")).map((r) => r.trim().replace(/^ittijah\//, "")).filter(Boolean);
+  const only = (v.rule ?? [])
+    .flatMap((r) => r.split(","))
+    .map((r) => r.trim().replace(/^ittijah\//, ""))
+    .filter(Boolean);
   const unknown = only.filter((r) => !rules.some((x) => x.meta.id === r));
   if (unknown.length) {
     console.error(pc.red(`✖ Unknown rule(s): ${unknown.join(", ")}. Run ittijah --list-rules.`));
@@ -149,7 +162,14 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
 
   let result;
   try {
-    result = run({ paths: args.positionals, cwd, fix: v.fix, rules: only, configPath: v.config, gitignore: !v["no-gitignore"] });
+    result = run({
+      paths: args.positionals,
+      cwd,
+      fix: v.fix,
+      rules: only,
+      configPath: v.config,
+      gitignore: !v["no-gitignore"],
+    });
   } catch (e) {
     if (e instanceof ConfigError) {
       console.error(pc.red(`✖ ${e.message}`));
@@ -164,7 +184,11 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
 
   let results = result.results;
   if (v.quiet) {
-    results = results.map((r) => ({ ...r, diagnostics: r.diagnostics.filter((d) => d.severity === "error"), warningCount: 0 }));
+    results = results.map((r) => ({
+      ...r,
+      diagnostics: r.diagnostics.filter((d) => d.severity === "error"),
+      warningCount: 0,
+    }));
   }
   const report = formatter(results, {
     cwd,
@@ -182,7 +206,9 @@ export async function main(argv: string[], cwd = process.cwd()): Promise<number>
     if (format !== "pretty") {
       const errors = results.reduce((n, r) => n + r.errorCount, 0);
       const warnings = results.reduce((n, r) => n + r.warningCount, 0);
-      console.error(`ittijah: ${errors} error(s), ${warnings} warning(s) in ${result.filesScanned} files → ${v.output}`);
+      console.error(
+        `ittijah: ${errors} error(s), ${warnings} warning(s) in ${result.filesScanned} files → ${v.output}`,
+      );
     }
   } else {
     process.stdout.write(report + "\n");

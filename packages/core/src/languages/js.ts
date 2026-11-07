@@ -2,7 +2,16 @@
  * JavaScript / TypeScript / JSX / TSX adapter (Babel parser, no type information needed).
  */
 import { parse, type ParserPlugin } from "@babel/parser";
-import { buildTextNodes, decodeEscapes, hasRtl, ISOLATED, isNumericName, PH_NUMERIC, PH_UNKNOWN, type Decoded } from "../bidi/message.js";
+import {
+  buildTextNodes,
+  decodeEscapes,
+  hasRtl,
+  ISOLATED,
+  isNumericName,
+  PH_NUMERIC,
+  PH_UNKNOWN,
+  type Decoded,
+} from "../bidi/message.js";
 import { decodeEntities } from "./entities.js";
 import type {
   Attribute,
@@ -11,30 +20,76 @@ import type {
   ClassListNode,
   ClassToken,
   ElementNode,
-  StyleObjectNode,
   StyleProp,
   TextNode,
 } from "../types.js";
 import type { Emitter } from "./emitter.js";
 
 // Babel AST nodes are handled structurally to keep this file free of heavy typings.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type N = any;
 
 /** Functions whose string arguments are class lists. */
 const CLASS_HELPERS = new Set([
-  "cn", "clsx", "classnames", "classNames", "cx", "twMerge", "twJoin", "cva", "tv", "ctl", "clx", "classes", "tw",
+  "cn",
+  "clsx",
+  "classnames",
+  "classNames",
+  "cx",
+  "twMerge",
+  "twJoin",
+  "cva",
+  "tv",
+  "ctl",
+  "clx",
+  "classes",
+  "tw",
 ]);
 /** Helpers whose *object values* are class lists (variants), rather than object keys. */
 const VARIANT_HELPERS = new Set(["cva", "tv"]);
 
 const SKIP_KEYS = new Set([
-  "type", "start", "end", "loc", "range", "extra", "leadingComments", "trailingComments", "innerComments", "comments", "tokens", "errors",
+  "type",
+  "start",
+  "end",
+  "loc",
+  "range",
+  "extra",
+  "leadingComments",
+  "trailingComments",
+  "innerComments",
+  "comments",
+  "tokens",
+  "errors",
 ]);
 
 /** Inline HTML elements whose text belongs to the parent's paragraph. */
 const INLINE_ELEMENTS = new Set([
-  "a", "abbr", "b", "cite", "code", "data", "dfn", "em", "i", "kbd", "label", "mark", "q", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "del", "ins",
+  "a",
+  "abbr",
+  "b",
+  "cite",
+  "code",
+  "data",
+  "dfn",
+  "em",
+  "i",
+  "kbd",
+  "label",
+  "mark",
+  "q",
+  "s",
+  "samp",
+  "small",
+  "span",
+  "strong",
+  "sub",
+  "sup",
+  "time",
+  "u",
+  "var",
+  "del",
+  "ins",
 ]);
 
 function pluginsFor(filePath: string): ParserPlugin[][] {
@@ -80,7 +135,12 @@ export interface JsAdapterOptions {
   rtlLocale: boolean;
 }
 
-export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAdapterOptions): void {
+export function walkJs(
+  text: string,
+  filePath: string,
+  emit: Emitter,
+  opts: JsAdapterOptions,
+): void {
   const ast = parseJs(text, filePath);
   const src = (n: N) => text.slice(n.start, n.end);
   const imports = new Map<string, ImportInfo>();
@@ -88,7 +148,11 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
     if (stmt.type !== "ImportDeclaration") continue;
     for (const spec of stmt.specifiers ?? []) {
       const imported =
-        spec.type === "ImportNamespaceSpecifier" ? "*" : spec.type === "ImportDefaultSpecifier" ? "default" : spec.imported?.name ?? spec.imported?.value;
+        spec.type === "ImportNamespaceSpecifier"
+          ? "*"
+          : spec.type === "ImportDefaultSpecifier"
+            ? "default"
+            : (spec.imported?.name ?? spec.imported?.value);
       imports.set(spec.local.name, { source: stmt.source.value, imported });
     }
   }
@@ -98,7 +162,11 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
   const wantText = hasRtl(text);
 
   // ------------------------------------------------------------------ class lists ------
-  function collectClassStrings(node: N, out: { tokens: ClassToken[]; complete: boolean }, valuesMode: boolean): void {
+  function collectClassStrings(
+    node: N,
+    out: { tokens: ClassToken[]; complete: boolean },
+    valuesMode: boolean,
+  ): void {
     if (!node) return;
     switch (node.type) {
       case "StringLiteral":
@@ -137,8 +205,10 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
         for (const p of node.properties) {
           if (p.type !== "ObjectProperty") continue;
           if (valuesMode) collectClassStrings(p.value, out, true);
-          else if (!p.computed && p.key.type === "StringLiteral") pushTokens(p.key.value, p.key.start + 1, p.key, out);
-          else if (!p.computed && p.key.type === "Identifier") out.tokens.push({ value: p.key.name, range: [p.key.start, p.key.end] });
+          else if (!p.computed && p.key.type === "StringLiteral")
+            pushTokens(p.key.value, p.key.start + 1, p.key, out);
+          else if (!p.computed && p.key.type === "Identifier")
+            out.tokens.push({ value: p.key.name, range: [p.key.start, p.key.end] });
         }
         return;
       case "CallExpression": {
@@ -176,16 +246,28 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
     // Escapes in class strings are rare; only map offsets when the raw text matches.
     const raw = text.slice(node.start + 1, node.end - 1);
     if (raw !== value) {
-      if (value.split(/\s+/).some(Boolean)) out.tokens.push(...splitTokens(value, base).map((t) => ({ ...t, group, range: [node.start, node.end] as [number, number] })));
+      if (value.split(/\s+/).some(Boolean))
+        out.tokens.push(
+          ...splitTokens(value, base).map((t) => ({
+            ...t,
+            group,
+            range: [node.start, node.end] as [number, number],
+          })),
+        );
       return;
     }
     out.tokens.push(...splitTokens(value, base).map((t) => ({ ...t, group })));
   }
 
-  function emitClassList(node: N, element: ElementNode | undefined, origin: ClassListNode["origin"]) {
+  function emitClassList(
+    node: N,
+    element: ElementNode | undefined,
+    origin: ClassListNode["origin"],
+  ) {
     const out = { tokens: [] as ClassToken[], complete: true };
     collectClassStrings(node, out, false);
-    if (out.tokens.length) emit.classList({ tokens: out.tokens, complete: out.complete, element, origin });
+    if (out.tokens.length)
+      emit.classList({ tokens: out.tokens, complete: out.complete, element, origin });
   }
 
   // ------------------------------------------------------------------ style objects ----
@@ -197,22 +279,46 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
         complete = false;
         continue;
       }
-      const key = p.key.type === "Identifier" ? p.key.name : p.key.type === "StringLiteral" ? p.key.value : null;
+      const key =
+        p.key.type === "Identifier"
+          ? p.key.name
+          : p.key.type === "StringLiteral"
+            ? p.key.value
+            : null;
       if (key === null) {
         complete = false;
         continue;
       }
       const v = p.value;
       let value: StyleProp["value"] = { kind: "dynamic" };
-      if (v.type === "StringLiteral") value = { kind: "static", value: v.value, range: [v.start + 1, v.end - 1], quoted: true };
-      else if (v.type === "NumericLiteral") value = { kind: "static", value: v.value, range: [v.start, v.end], quoted: false };
-      else if (v.type === "UnaryExpression" && v.operator === "-" && v.argument.type === "NumericLiteral")
-        value = { kind: "static", value: -v.argument.value, range: [v.start, v.end], quoted: false };
+      if (v.type === "StringLiteral")
+        value = { kind: "static", value: v.value, range: [v.start + 1, v.end - 1], quoted: true };
+      else if (v.type === "NumericLiteral")
+        value = { kind: "static", value: v.value, range: [v.start, v.end], quoted: false };
+      else if (
+        v.type === "UnaryExpression" &&
+        v.operator === "-" &&
+        v.argument.type === "NumericLiteral"
+      )
+        value = {
+          kind: "static",
+          value: -v.argument.value,
+          range: [v.start, v.end],
+          quoted: false,
+        };
       else if (v.type === "TemplateLiteral" && v.expressions.length === 0)
-        value = { kind: "static", value: v.quasis[0].value.cooked ?? "", range: [v.start + 1, v.end - 1], quoted: true };
+        value = {
+          kind: "static",
+          value: v.quasis[0].value.cooked ?? "",
+          range: [v.start + 1, v.end - 1],
+          quoted: true,
+        };
       props.push({
         key,
-        keyRange: p.key.type === "StringLiteral" ? [p.key.start + 1, p.key.end - 1] : [p.key.start, p.key.end],
+        keyRange:
+          p.key.type === "StringLiteral"
+            ? [p.key.start + 1, p.key.end - 1]
+            : [p.key.start, p.key.end],
         keyQuoted: p.key.type === "StringLiteral",
         value,
       });
@@ -230,12 +336,18 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
 
   function attrValue(v: N): AttrValue {
     if (!v) return { kind: "boolean" };
-    if (v.type === "StringLiteral") return { kind: "static", value: v.value, range: [v.start + 1, v.end - 1] };
+    if (v.type === "StringLiteral")
+      return { kind: "static", value: v.value, range: [v.start + 1, v.end - 1] };
     if (v.type === "JSXExpressionContainer") {
       const e = v.expression;
-      if (e.type === "StringLiteral") return { kind: "static", value: e.value, range: [e.start + 1, e.end - 1] };
+      if (e.type === "StringLiteral")
+        return { kind: "static", value: e.value, range: [e.start + 1, e.end - 1] };
       if (e.type === "TemplateLiteral" && e.expressions.length === 0)
-        return { kind: "static", value: e.quasis[0].value.cooked ?? "", range: [e.start + 1, e.end - 1] };
+        return {
+          kind: "static",
+          value: e.quasis[0].value.cooked ?? "",
+          range: [e.start + 1, e.end - 1],
+        };
       return { kind: "dynamic", text: src(e), range: [e.start, e.end], node: e };
     }
     return { kind: "dynamic", text: src(v), range: [v.start, v.end], node: v };
@@ -251,7 +363,10 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
         hasSpread = true;
         continue;
       }
-      const attrName = a.name.type === "JSXNamespacedName" ? `${a.name.namespace.name}:${a.name.name.name}` : a.name.name;
+      const attrName =
+        a.name.type === "JSXNamespacedName"
+          ? `${a.name.namespace.name}:${a.name.name.name}`
+          : a.name.name;
       attributes.push({ name: attrName, value: attrValue(a.value), range: [a.start, a.end] });
     }
     const children: ChildInfo[] = [];
@@ -259,8 +374,10 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
       if (c.type === "JSXText") {
         if (c.value.trim()) children.push({ kind: "text", value: c.value });
       } else if (c.type === "JSXExpressionContainer") {
-        if (c.expression.type !== "JSXEmptyExpression") children.push({ kind: "expression", text: src(c.expression) });
-      } else if (c.type === "JSXElement") children.push({ kind: "element", name: jsxName(c.openingElement.name) });
+        if (c.expression.type !== "JSXEmptyExpression")
+          children.push({ kind: "expression", text: src(c.expression) });
+      } else if (c.type === "JSXElement")
+        children.push({ kind: "element", name: jsxName(c.openingElement.name) });
       else if (c.type === "JSXFragment") children.push({ kind: "element", name: "" });
     }
     const root = name.split(".")[0]!;
@@ -276,7 +393,13 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
       ancestors: [...state.elements].reverse(),
       source: "jsx",
       importSource: imp?.source,
-      importedName: imp ? (name.includes(".") ? name.split(".").pop() : imp.imported === "default" ? root : imp.imported) : undefined,
+      importedName: imp
+        ? name.includes(".")
+          ? name.split(".").pop()
+          : imp.imported === "default"
+            ? root
+            : imp.imported
+        : undefined,
       conditionalTests: [...state.tests],
       children,
       getAttr: (n: string) => attributes.find((a) => a.name === n),
@@ -287,9 +410,14 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
   // ------------------------------------------------------------------ text -------------
   function placeholderFor(expr: N): string {
     const t = src(expr).replace(/\s+/g, "");
-    const last = t.split(/[.?[\]()]/).filter(Boolean).pop() ?? t;
+    const last =
+      t
+        .split(/[.?[\]()]/)
+        .filter(Boolean)
+        .pop() ?? t;
     if (expr.type === "NumericLiteral") return PH_NUMERIC;
-    if (/^(toLocaleString|toFixed|format|formatNumber|toString)$/.test(last) || isNumericName(last)) return PH_NUMERIC;
+    if (/^(toLocaleString|toFixed|format|formatNumber|toString)$/.test(last) || isNumericName(last))
+      return PH_NUMERIC;
     return PH_UNKNOWN;
   }
 
@@ -347,11 +475,18 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
       (n.children ?? []).some(
         (c: N) =>
           (c.type === "JSXText" && hasRtl(c.value)) ||
-          (c.type === "JSXExpressionContainer" && c.expression.type === "StringLiteral" && hasRtl(c.expression.value)) ||
+          (c.type === "JSXExpressionContainer" &&
+            c.expression.type === "StringLiteral" &&
+            hasRtl(c.expression.value)) ||
           ((c.type === "JSXElement" || c.type === "JSXFragment") && hasRtlChild(c)),
       );
     if (!hasRtlChild(el)) return;
-    const acc = { text: "", offsets: [] as number[], ends: [] as number[], placeholders: new Map<number, string>() };
+    const acc = {
+      text: "",
+      offsets: [] as number[],
+      ends: [] as number[],
+      placeholders: new Map<number, string>(),
+    };
     jsxChildrenText(el, acc);
     if (!hasRtl(acc.text)) return;
     const dir = element.getAttr("dir");
@@ -369,7 +504,13 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
     emit.text(node);
   }
 
-  function emitStringText(n: N, decoded: Decoded, withSentinels: boolean, key: string | undefined, markEncoding: TextNode["markEncoding"] = "escape") {
+  function emitStringText(
+    n: N,
+    decoded: Decoded,
+    withSentinels: boolean,
+    key: string | undefined,
+    markEncoding: TextNode["markEncoding"] = "escape",
+  ) {
     const base = {
       kind: opts.translationFile ? ("translation" as const) : ("js-string" as const),
       range: [n.start, n.end] as [number, number],
@@ -419,7 +560,11 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
           if ((an === "className" || an === "class") && a.value) {
             const v = a.value.type === "JSXExpressionContainer" ? a.value.expression : a.value;
             emitClassList(v, element, "attribute");
-          } else if (an === "style" && a.value.type === "JSXExpressionContainer" && a.value.expression.type === "ObjectExpression") {
+          } else if (
+            an === "style" &&
+            a.value.type === "JSXExpressionContainer" &&
+            a.value.expression.type === "ObjectExpression"
+          ) {
             emitStyleObject(a.value.expression, element);
             handled.add(a.value.expression);
           }
@@ -455,21 +600,35 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
       }
       case "CallExpression": {
         const name = calleeName(node.callee);
-        if (name && CLASS_HELPERS.has(name) && !handled.has(node)) emitClassList(node, undefined, "helper");
+        if (name && CLASS_HELPERS.has(name) && !handled.has(node))
+          emitClassList(node, undefined, "helper");
         break;
       }
       case "TaggedTemplateExpression":
-        if (calleeName(node.tag) === "tw" && !handled.has(node)) emitClassList(node, undefined, "helper");
+        if (calleeName(node.tag) === "tw" && !handled.has(node))
+          emitClassList(node, undefined, "helper");
         break;
       case "StringLiteral": {
         if (!wantText || !hasRtl(node.value)) return;
         if (parentKey === "key" && parent?.type === "ObjectProperty" && !parent.computed) return;
-        if (parent?.type === "JSXAttribute" && /^(className|class|style|href|src)$/.test(parent.name?.name)) return;
+        if (
+          parent?.type === "JSXAttribute" &&
+          /^(className|class|style|href|src)$/.test(parent.name?.name)
+        )
+          return;
         const raw = text.slice(node.start + 1, node.end - 1);
         // JSX attribute strings are not JS strings: no escapes, but HTML entities.
         const inJsxAttr = parent?.type === "JSXAttribute";
-        const decoded = inJsxAttr ? decodeEntities(raw, node.start + 1) : decodeEscapes(raw, node.start + 1);
-        emitStringText(node, decoded, false, keyStack.join(".") || undefined, inJsxAttr ? "entity" : "escape");
+        const decoded = inJsxAttr
+          ? decodeEntities(raw, node.start + 1)
+          : decodeEscapes(raw, node.start + 1);
+        emitStringText(
+          node,
+          decoded,
+          false,
+          keyStack.join(".") || undefined,
+          inJsxAttr ? "entity" : "escape",
+        );
         return;
       }
       case "TemplateLiteral": {
@@ -490,7 +649,13 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
         return;
       }
       case "ObjectProperty": {
-        const k = !node.computed && (node.key.type === "Identifier" ? node.key.name : node.key.type === "StringLiteral" ? node.key.value : null);
+        const k =
+          !node.computed &&
+          (node.key.type === "Identifier"
+            ? node.key.name
+            : node.key.type === "StringLiteral"
+              ? node.key.value
+              : null);
         if (k) keyStack.push(k);
         visit(node.key, node, "key");
         visit(node.value, node, "value");
@@ -516,7 +681,11 @@ export function walkJs(text: string, filePath: string, emit: Emitter, opts: JsAd
 function calleeName(callee: N): string | null {
   if (!callee) return null;
   if (callee.type === "Identifier") return callee.name;
-  if (callee.type === "MemberExpression" && !callee.computed && callee.property.type === "Identifier") {
+  if (
+    callee.type === "MemberExpression" &&
+    !callee.computed &&
+    callee.property.type === "Identifier"
+  ) {
     // e.g. tw.div`…`, utils.cn(...)
     if (callee.object.type === "Identifier" && callee.object.name === "tw") return "tw";
     return callee.property.name;
@@ -528,6 +697,7 @@ export function splitTokens(value: string, base: number): ClassToken[] {
   const out: ClassToken[] = [];
   const re = /\S+/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(value))) out.push({ value: m[0], range: [base + m.index, base + m.index + m[0].length] });
+  while ((m = re.exec(value)))
+    out.push({ value: m[0], range: [base + m.index, base + m.index + m[0].length] });
   return out;
 }

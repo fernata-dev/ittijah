@@ -89,19 +89,33 @@ export function resolveProjectInfo(filePath: string, settings: IttijahSettings =
   if (cached) return cached;
 
   const deps = collectDeps(dir);
-  const twRange = deps.get("tailwindcss") ?? deps.get("@tailwindcss/postcss") ?? deps.get("@tailwindcss/vite") ?? deps.get("@tailwindcss/cli");
+  const twRange =
+    deps.get("tailwindcss") ??
+    deps.get("@tailwindcss/postcss") ??
+    deps.get("@tailwindcss/vite") ??
+    deps.get("@tailwindcss/cli");
   const twVersion = minVersion(twRange);
   const twDetected = twRange !== undefined;
-  const tailwindEnabled = settings.tailwind === "auto" || settings.tailwind === undefined ? twDetected : settings.tailwind;
+  const tailwindEnabled =
+    settings.tailwind === "auto" || settings.tailwind === undefined
+      ? twDetected
+      : settings.tailwind;
   // When forced on without a detectable version, assume a modern Tailwind.
   const effective = twVersion ?? (tailwindEnabled ? ([4, 0] as [number, number]) : null);
 
   const flipper = BUILD_TIME_FLIPPERS.find((name) => deps.has(name)) ?? null;
   const buildTimeFlip =
-    settings.buildTimeFlip === false ? null : settings.buildTimeFlip === true ? flipper ?? "configured" : flipper;
+    settings.buildTimeFlip === false
+      ? null
+      : settings.buildTimeFlip === true
+        ? (flipper ?? "configured")
+        : flipper;
 
   const rnDetected = deps.has("react-native") || deps.has("expo");
-  const reactNative = settings.reactNative === "auto" || settings.reactNative === undefined ? rnDetected : settings.reactNative;
+  const reactNative =
+    settings.reactNative === "auto" || settings.reactNative === undefined
+      ? rnDetected
+      : settings.reactNative;
 
   const info: ProjectInfo = {
     tailwind: {

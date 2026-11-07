@@ -25,8 +25,9 @@ const MARK_NAMES: Record<string, { escape: string; entity: string; name: string 
 export const bidiUnsafeString: Rule<Options> = {
   meta: {
     id: "bidi-unsafe-string",
-    description: "Detect Arabic/Hebrew strings whose punctuation, handles, signed numbers or leading Latin text are reordered by the Unicode Bidirectional Algorithm.",
-    bug: "In Arabic UI text, \"follow us on @ittijah\" is displayed with the handle as \"ittijah@\", and a temperature of -5 is displayed as \"5-\": the bidi algorithm moves neutral characters to the wrong side.",
+    description:
+      "Detect Arabic/Hebrew strings whose punctuation, handles, signed numbers or leading Latin text are reordered by the Unicode Bidirectional Algorithm.",
+    bug: 'In Arabic UI text, "follow us on @ittijah" is displayed with the handle as "ittijah@", and a temperature of -5 is displayed as "5-": the bidi algorithm moves neutral characters to the wrong side.',
     docsUrl: docsUrl("bidi-unsafe-string"),
     defaultSeverity: "error",
     fixable: false,
@@ -41,7 +42,11 @@ export const bidiUnsafeString: Rule<Options> = {
         if (node.key && ignoreKey?.(node.key)) return;
         const findings = analyzeText(
           node.text,
-          { firstStrong: node.firstStrongContext && ctx.options.leadingLtr, rtlLocale: node.rtlLocale, checks: ctx.options.checks },
+          {
+            firstStrong: node.firstStrongContext && ctx.options.leadingLtr,
+            rtlLocale: node.rtlLocale,
+            checks: ctx.options.checks,
+          },
           node.placeholders,
         );
         for (const f of findings) {
@@ -52,7 +57,12 @@ export const bidiUnsafeString: Rule<Options> = {
             const at = f.mark.after ? node.ends[f.mark.index] : node.offsets[f.mark.index];
             const mark = MARK_NAMES[f.mark.char]!;
             if (at !== undefined) {
-              suggestions = [{ desc: `Insert ${mark.name} (${mark[node.markEncoding]})`, fix: [{ range: [at, at], text: mark[node.markEncoding] }] }];
+              suggestions = [
+                {
+                  desc: `Insert ${mark.name} (${mark[node.markEncoding]})`,
+                  fix: [{ range: [at, at], text: mark[node.markEncoding] }],
+                },
+              ];
             }
           }
           ctx.report({

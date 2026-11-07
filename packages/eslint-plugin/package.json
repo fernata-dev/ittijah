@@ -6,11 +6,32 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
-  "engines": { "node": ">=20" },
-  "repository": { "type": "git", "url": "git+https://github.com/fernata-dev/ittijah.git", "directory": "packages/eslint-plugin" },
-  "keywords": ["eslint", "eslintplugin", "eslint-plugin", "rtl", "bidi", "arabic"],
-  "peerDependencies": { "eslint": ">=9" },
-  "scripts": { "build": "tsc -b" },
-  "dependencies": { "@ittijah/core": "workspace:*" }
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernata-dev/ittijah.git",
+    "directory": "packages/eslint-plugin"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "rtl",
+    "bidi",
+    "arabic"
+  ],
+  "peerDependencies": {
+    "eslint": ">=9"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@ittijah/core": "workspace:*"
+  }
 }

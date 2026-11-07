@@ -13,10 +13,13 @@
  */
 import { ISOLATED, PH_NUMERIC, PH_UNKNOWN } from "./message.js";
 
-export type BidiClass = "R" | "L" | "EN" | "AN" | "WS" | "ON" | "NSM" | "PH" | "PN" | "ISO" | "LRM" | "RLM";
+export type BidiClass =
+  "R" | "L" | "EN" | "AN" | "WS" | "ON" | "NSM" | "PH" | "PN" | "ISO" | "LRM" | "RLM";
 
-const AL_OR_R = /[\u0590-\u05FF\u0608\u060B\u060D\u061B-\u064A\u066D-\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
-const NSM_IN_RTL = /[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/;
+const AL_OR_R =
+  /[\u0590-\u05FF\u0608\u060B\u060D\u061B-\u064A\u066D-\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+const NSM_IN_RTL =
+  /[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/;
 const LETTER = /\p{L}/u;
 const MARK = /\p{M}/u;
 
@@ -127,7 +130,12 @@ function strongAfter(cls: BidiClass[], i: number): BidiClass | "eos" {
 
 const isStrongR = (c: BidiClass | "sos" | "eos") => c === "R" || c === "RLM";
 
-function show(text: string, placeholders: Map<number, string> | undefined, start: number, end: number): string {
+function show(
+  text: string,
+  placeholders: Map<number, string> | undefined,
+  start: number,
+  end: number,
+): string {
   let out = "";
   for (let i = start; i < end; i++) {
     const ch = text[i]!;
@@ -159,7 +167,8 @@ export function analyzeText(
         while (end > i && /\s/.test(text[end - 1]!)) end--;
         const lead = show(text, placeholders, i, end);
         const what = c === "PH" ? `the placeholder ${lead}` : `Latin text "${lead}"`;
-        const ifValue = c === "PH" ? " If its value is Latin (names, e-mails, product names\u2026)," : "";
+        const ifValue =
+          c === "PH" ? " If its value is Latin (names, e-mails, product names\u2026)," : "";
         findings.push({
           check: "leading-ltr",
           start: i,
@@ -202,7 +211,10 @@ export function analyzeText(
       while (wordEnd < text.length && cls[wordEnd] !== "WS" && cls[wordEnd] !== "R") wordEnd++;
       const prefix = text.slice(i, j);
       const word = show(text, placeholders, j, wordEnd);
-      const valueNote = next === "PH" ? " (assuming the placeholder holds Latin text, as handles and paths do)" : "";
+      const valueNote =
+        next === "PH"
+          ? " (assuming the placeholder holds Latin text, as handles and paths do)"
+          : "";
       findings.push({
         check: "neutral-before-ltr",
         start: i,
@@ -229,7 +241,8 @@ export function analyzeText(
       const after = strongAfter(cls, j);
       if (!(isStrongR(after) || after === "eos")) continue;
       let wordStart = i;
-      while (wordStart > 0 && cls[wordStart - 1] !== "WS" && cls[wordStart - 1] !== "R") wordStart--;
+      while (wordStart > 0 && cls[wordStart - 1] !== "WS" && cls[wordStart - 1] !== "R")
+        wordStart--;
       if (cls[wordStart] !== "L") continue;
       const suffix = text.slice(i + 1, j);
       const word = show(text, placeholders, wordStart, i + 1);
@@ -264,7 +277,8 @@ export function analyzeText(
       let end = i + 1;
       const groups: string[] = [];
       let g = end;
-      while (end < text.length && (cls[end] === "EN" || cls[end] === "AN" || cls[end] === "PN")) end++;
+      while (end < text.length && (cls[end] === "EN" || cls[end] === "AN" || cls[end] === "PN"))
+        end++;
       groups.push(show(text, placeholders, g, end));
       if (sign === "+") {
         for (;;) {
@@ -282,7 +296,8 @@ export function analyzeText(
       }
       if (end < text.length && cls[end] === "L") continue; // "-5px", "+1x": part of a Latin token
       const logical = show(text, placeholders, i, end);
-      const visual = sign === "+" ? `${[...groups].reverse().join(" ")}${sign}` : `${groups.join("")}${sign}`;
+      const visual =
+        sign === "+" ? `${[...groups].reverse().join(" ")}${sign}` : `${groups.join("")}${sign}`;
       findings.push({
         check: "signed-number",
         start: i,

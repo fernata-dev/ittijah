@@ -10,7 +10,6 @@ import { splitTokens } from "./js.js";
 import type { Attribute, ChildInfo, ElementNode } from "../types.js";
 import type { Emitter } from "./emitter.js";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type N = any;
 
 const TEMPLATE_EXPR = /^\s*(\{\{\{?|\{%|<%=?|\$\{)\s*([\s\S]*?)\s*(\}?\}\}|%\}|%>|\})\s*$/;
@@ -34,7 +33,12 @@ export function walkHtml(text: string, emit: Emitter): void {
   }
 
   function visit(node: N): void {
-    if (node.nodeName === "#text" || node.nodeName === "#comment" || node.nodeName === "#documentType") return;
+    if (
+      node.nodeName === "#text" ||
+      node.nodeName === "#comment" ||
+      node.nodeName === "#documentType"
+    )
+      return;
     const loc = node.sourceCodeLocation;
     let element: ElementNode | null = null;
 
@@ -43,7 +47,9 @@ export function walkHtml(text: string, emit: Emitter): void {
       for (const a of node.attrs ?? []) {
         const range = attrRange(loc.startTag, a.name, a.value);
         const al = loc.startTag.attrs?.[a.name];
-        const whole: [number, number] = al ? [al.startOffset, al.endOffset] : [loc.startTag.startOffset, loc.startTag.startOffset];
+        const whole: [number, number] = al
+          ? [al.startOffset, al.endOffset]
+          : [loc.startTag.startOffset, loc.startTag.startOffset];
         const raw = al ? text.slice(al.startOffset, al.endOffset) : "";
         const isBool = !raw.includes("=");
         const templated = /\{\{|\{%|<%|\$\{/.test(a.value);
@@ -83,16 +89,29 @@ export function walkHtml(text: string, emit: Emitter): void {
 
       const cls = element.getAttr("class");
       if (cls?.value.kind === "static") {
-        emit.classList({ tokens: splitTokens(cls.value.value, cls.value.range[0]), complete: true, element, origin: "attribute" });
+        emit.classList({
+          tokens: splitTokens(cls.value.value, cls.value.range[0]),
+          complete: true,
+          element,
+          origin: "attribute",
+        });
       } else if (cls?.value.kind === "dynamic") {
         // Keep the static tokens of templated class attributes, minus the ones touching {{ }}.
-        const tokens = splitTokens(cls.value.text, cls.value.range[0]).filter((t) => !/[{}%<>$]/.test(t.value));
-        if (tokens.length) emit.classList({ tokens, complete: false, element, origin: "attribute" });
+        const tokens = splitTokens(cls.value.text, cls.value.range[0]).filter(
+          (t) => !/[{}%<>$]/.test(t.value),
+        );
+        if (tokens.length)
+          emit.classList({ tokens, complete: false, element, origin: "attribute" });
       }
       const style = element.getAttr("style");
       if (style?.value.kind === "static" && style.value.value.trim()) {
         try {
-          walkCss(parseCss(style.value.value, "css"), style.value.range[0], true, emit.cssDeclaration);
+          walkCss(
+            parseCss(style.value.value, "css"),
+            style.value.range[0],
+            true,
+            emit.cssDeclaration,
+          );
         } catch {
           /* invalid inline style: ignore */
         }
@@ -103,7 +122,12 @@ export function walkHtml(text: string, emit: Emitter): void {
         const tl = t?.sourceCodeLocation;
         if (t && tl) {
           try {
-            walkCss(parseCss(text.slice(tl.startOffset, tl.endOffset), "scss"), tl.startOffset, false, emit.cssDeclaration);
+            walkCss(
+              parseCss(text.slice(tl.startOffset, tl.endOffset), "scss"),
+              tl.startOffset,
+              false,
+              emit.cssDeclaration,
+            );
           } catch {
             /* ignore */
           }
@@ -132,7 +156,8 @@ export function walkHtml(text: string, emit: Emitter): void {
       stack.push(element);
     }
 
-    const kids = node.tagName === "template" && node.content ? node.content.childNodes : node.childNodes;
+    const kids =
+      node.tagName === "template" && node.content ? node.content.childNodes : node.childNodes;
     for (const c of kids ?? []) visit(c);
     if (element) stack.pop();
   }

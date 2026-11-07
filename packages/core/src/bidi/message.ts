@@ -18,7 +18,8 @@ export interface Decoded {
 }
 
 /** Characters from Hebrew, Arabic, Syriac, Thaana, NKo… and their presentation forms. */
-export const RTL_CHAR = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]|\uD802[\uDC00-\uDFFF]|\uD83A[\uDC00-\uDFFF]/;
+export const RTL_CHAR =
+  /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]|\uD802[\uDC00-\uDFFF]|\uD83A[\uDC00-\uDFFF]/;
 
 export function hasRtl(s: string): boolean {
   return RTL_CHAR.test(s);
@@ -37,7 +38,11 @@ export function plain(raw: string, base: number): Decoded {
 
 /** Same offset for every character (used when exact mapping is impossible, e.g. YAML block scalars). */
 export function pinned(text: string, start: number, end: number): Decoded {
-  return { text, offsets: new Array<number>(text.length).fill(start), ends: new Array<number>(text.length).fill(end) };
+  return {
+    text,
+    offsets: new Array<number>(text.length).fill(start),
+    ends: new Array<number>(text.length).fill(end),
+  };
 }
 
 const SIMPLE_ESCAPES: Record<string, string> = {
@@ -120,12 +125,20 @@ export function concatDecoded(parts: Decoded[]): Decoded {
 
 const NUMERIC_NAME =
   /^(?:n|i|count|cnt|num|number|total|amount|qty|quantity|index|idx|page|pages|size|length|len|percent|percentage|pct|year|years|month|months|week|weeks|day|days|hour|hours|minute|minutes|mins?|second|seconds|secs?|max|min|limit|remaining|step|steps|current|price|cost|balance|score|points|rating|age|duration|time|date|datetime|progress|ratio|level|rank|position|order|sum|average|avg|value|val)$/i;
-const NUMERIC_SUFFIX = /(?:Count|Number|Num|Total|Amount|Qty|Index|Size|Length|Percent|Price|Score|Points|Seconds|Minutes|Hours|Days|Date|Time|Id|ID)$|_(?:count|number|num|total|amount|price|date|time|id)$|^(?:id|ID)$/;
+const NUMERIC_SUFFIX =
+  /(?:Count|Number|Num|Total|Amount|Qty|Index|Size|Length|Percent|Price|Score|Points|Seconds|Minutes|Hours|Days|Date|Time|Id|ID)$|_(?:count|number|num|total|amount|price|date|time|id)$|^(?:id|ID)$/;
 
 /** Heuristic: does a placeholder name denote a number/date (direction-neutral content)? */
 export function isNumericName(name: string): boolean {
-  const last = name.trim().split(/[.\s[\]]/).filter(Boolean).pop() ?? "";
-  return NUMERIC_NAME.test(last) || NUMERIC_SUFFIX.test(last) || /^(?:num|count|total)[A-Z_]/.test(last);
+  const last =
+    name
+      .trim()
+      .split(/[.\s[\]]/)
+      .filter(Boolean)
+      .pop() ?? "";
+  return (
+    NUMERIC_NAME.test(last) || NUMERIC_SUFFIX.test(last) || /^(?:num|count|total)[A-Z_]/.test(last)
+  );
 }
 
 interface Token {
@@ -183,8 +196,10 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
 
     if (c === "<") {
       // <bdi>…</bdi>, <bdo>…</bdo>, <x dir="…">…</x>: isolated.
-      if ((m = rest().match(/^<(bdi|bdo)\b[^<>]*>[\s\S]*?<\/\1\s*>/i)) ||
-          (m = rest().match(/^<([A-Za-z0-9]+)\b[^<>]*\bdir\s*=[^<>]*>[\s\S]*?<\/\1\s*>/))) {
+      if (
+        (m = rest().match(/^<(bdi|bdo)\b[^<>]*>[\s\S]*?<\/\1\s*>/i)) ||
+        (m = rest().match(/^<([A-Za-z0-9]+)\b[^<>]*\bdir\s*=[^<>]*>[\s\S]*?<\/\1\s*>/))
+      ) {
         tokens.push({ start: i, end: i + m[0].length, replacement: ISOLATED, raw: m[0] });
         i += m[0].length;
         continue;
@@ -201,7 +216,12 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
       // {{ name }} / {{{ name }}} (i18next, Handlebars, vue-i18n, Angular)
       if ((m = rest().match(/^\{\{\{?\s*([^{}]*?)\s*\}?\}\}/))) {
         const name = m[1]!.split(/[,|]/)[0]!.replace(/^[-#/^>&]\s*/, "");
-        tokens.push({ start: i, end: i + m[0].length, replacement: isNumericName(name) ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: isNumericName(name) ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
@@ -210,7 +230,12 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
         const close = matchBrace(s, i);
         if (close !== -1) {
           const kind = m[2]!;
-          tokens.push({ start: i, end: close + 1, replacement: kind === "select" ? PH_UNKNOWN : PH_NUMERIC, raw: s.slice(i, close + 1) });
+          tokens.push({
+            start: i,
+            end: close + 1,
+            replacement: kind === "select" ? PH_UNKNOWN : PH_NUMERIC,
+            raw: s.slice(i, close + 1),
+          });
           // collect branches
           let j = i + m[0].length;
           while (j < close) {
@@ -228,8 +253,15 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
       // ICU simple argument: {name} / {name, number} / {0}
       if ((m = rest().match(/^\{\s*([\w.$-]+)\s*(?:,\s*(\w+)[^{}]*)?\}/))) {
         const type = m[2];
-        const numeric = type ? /^(number|date|time|duration|spellout|ordinal)$/.test(type) : isNumericName(m[1]!);
-        tokens.push({ start: i, end: i + m[0].length, replacement: numeric ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        const numeric = type
+          ? /^(number|date|time|duration|spellout|ordinal)$/.test(type)
+          : isNumericName(m[1]!);
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: numeric ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
@@ -242,19 +274,38 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
       }
       // Rails %{name}, Python %(name)s, printf/iOS %1$s %d %@ %.2f %lld
       if ((m = rest().match(/^%\{([\w.]+)\}/)) || (m = rest().match(/^%<([\w.]+)>[a-z]/))) {
-        tokens.push({ start: i, end: i + m[0].length, replacement: isNumericName(m[1]!) ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: isNumericName(m[1]!) ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
       if ((m = rest().match(/^%\(([\w.]+)\)[-+ 0#]*\d*(?:\.\d+)?([sdifeEgGxXrc])/))) {
         const numeric = /[difeEgGxX]/.test(m[2]!) || isNumericName(m[1]!);
-        tokens.push({ start: i, end: i + m[0].length, replacement: numeric ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: numeric ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
-      if ((m = rest().match(/^%(?:\d+\$)?[-+ 0#']*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?([sdiufFeEgGxXoc@])/))) {
+      if (
+        (m = rest().match(
+          /^%(?:\d+\$)?[-+ 0#']*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?([sdiufFeEgGxXoc@])/,
+        ))
+      ) {
         const numeric = /[diufFeEgGxXo]/.test(m[1]!);
-        tokens.push({ start: i, end: i + m[0].length, replacement: numeric ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: numeric ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
@@ -263,7 +314,12 @@ function tokenize(s: string, pluralContext: boolean): { tokens: Token[]; branche
     if (c === "$") {
       // i18next nesting $t(key) and ${name}
       if ((m = rest().match(/^\$t\([^()]*\)/)) || (m = rest().match(/^\$\{\s*([\w.]+)\s*\}/))) {
-        tokens.push({ start: i, end: i + m[0].length, replacement: m[1] && isNumericName(m[1]) ? PH_NUMERIC : PH_UNKNOWN, raw: m[0] });
+        tokens.push({
+          start: i,
+          end: i + m[0].length,
+          replacement: m[1] && isNumericName(m[1]) ? PH_NUMERIC : PH_UNKNOWN,
+          raw: m[0],
+        });
         i += m[0].length;
         continue;
       }
@@ -290,13 +346,21 @@ export interface TextNodeBase {
   markEncoding: TextNode["markEncoding"];
 }
 
-function apply(decoded: Decoded, from: number, to: number, tokens: Token[], base: TextNodeBase): TextNode {
+function apply(
+  decoded: Decoded,
+  from: number,
+  to: number,
+  tokens: Token[],
+  base: TextNodeBase,
+): TextNode {
   let text = "";
   const offsets: number[] = [];
   const ends: number[] = [];
   const placeholders = new Map<number, string>();
   let i = from;
-  const relevant = tokens.filter((t) => t.start >= from && t.end <= to).sort((a, b) => a.start - b.start);
+  const relevant = tokens
+    .filter((t) => t.start >= from && t.end <= to)
+    .sort((a, b) => a.start - b.start);
   for (const t of relevant) {
     for (; i < t.start; i++) {
       text += decoded.text[i];
@@ -323,7 +387,11 @@ function apply(decoded: Decoded, from: number, to: number, tokens: Token[], base
  * Build one or more TextNodes from a decoded string. With format "message", placeholder
  * syntaxes are recognized; ICU plural/select branches become additional TextNodes.
  */
-export function buildTextNodes(decoded: Decoded, format: MessageFormat, base: TextNodeBase): TextNode[] {
+export function buildTextNodes(
+  decoded: Decoded,
+  format: MessageFormat,
+  base: TextNodeBase,
+): TextNode[] {
   if (format === "plain") return [apply(decoded, 0, decoded.text.length, [], base)];
   const out: TextNode[] = [];
   const visit = (from: number, to: number, pluralContext: boolean) => {

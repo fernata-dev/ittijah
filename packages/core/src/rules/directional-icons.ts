@@ -3,24 +3,56 @@ import { docsUrl } from "./util.js";
 
 /** Icon packages whose arrows/chevrons do NOT mirror automatically in RTL. */
 export const DEFAULT_ICON_SOURCES = [
-  "lucide-react", "lucide-preact", "lucide-solid", "lucide-react-native", "@heroicons/react", "react-icons",
-  "@mui/icons-material", "@material-ui/icons", "@tabler/icons-react", "@tabler/icons-react-native",
-  "@phosphor-icons/react", "phosphor-react", "react-feather", "@ant-design/icons", "@radix-ui/react-icons",
-  "@fortawesome/react-fontawesome", "@iconify/react", "@iconify-icon/react", "@primer/octicons-react",
-  "@chakra-ui/icons", "@carbon/icons-react", "@remixicon/react", "@hugeicons/react", "hugeicons-react",
-  "react-bootstrap-icons", "iconoir-react", "@mynaui/icons-react", "@untitled-ui/icons-react", "@expo/vector-icons",
-  "react-native-vector-icons", "@geist-ui/icons", "@vscode/codicons", "@atlaskit/icon", "@mantine/icons",
+  "lucide-react",
+  "lucide-preact",
+  "lucide-solid",
+  "lucide-react-native",
+  "@heroicons/react",
+  "react-icons",
+  "@mui/icons-material",
+  "@material-ui/icons",
+  "@tabler/icons-react",
+  "@tabler/icons-react-native",
+  "@phosphor-icons/react",
+  "phosphor-react",
+  "react-feather",
+  "@ant-design/icons",
+  "@radix-ui/react-icons",
+  "@fortawesome/react-fontawesome",
+  "@iconify/react",
+  "@iconify-icon/react",
+  "@primer/octicons-react",
+  "@chakra-ui/icons",
+  "@carbon/icons-react",
+  "@remixicon/react",
+  "@hugeicons/react",
+  "hugeicons-react",
+  "react-bootstrap-icons",
+  "iconoir-react",
+  "@mynaui/icons-react",
+  "@untitled-ui/icons-react",
+  "@expo/vector-icons",
+  "react-native-vector-icons",
+  "@geist-ui/icons",
+  "@vscode/codicons",
+  "@atlaskit/icon",
+  "@mantine/icons",
 ];
 
-const LIB_PREFIX = /^(?:Fa6?|Fi|Md|Io5?|Bi|Hi2?|Ai|Bs|Ri|Tb|Lu|Pi|Gr|Im|Si|Vsc|Cg|Go|Gi|Wi|Di|Fc|Lia|Rx|Sl|Tfi|Ti|Ci)(?=[A-Z])/;
-const VARIANT_SUFFIX = /(?:Icon|Outlined|Filled|Rounded|Sharp|TwoTone|TwoTones|Outline|Solid|Fill|Bold|Light|Thin|Duotone|Regular|Mini|Micro|Line|Linear|Broken|Bulk|Stroke|Svg|\d+)+$/;
+const LIB_PREFIX =
+  /^(?:Fa6?|Fi|Md|Io5?|Bi|Hi2?|Ai|Bs|Ri|Tb|Lu|Pi|Gr|Im|Si|Vsc|Cg|Go|Gi|Wi|Di|Fc|Lia|Rx|Sl|Tfi|Ti|Ci)(?=[A-Z])/;
+const VARIANT_SUFFIX =
+  /(?:Icon|Outlined|Filled|Rounded|Sharp|TwoTone|TwoTones|Outline|Solid|Fill|Bold|Light|Thin|Duotone|Regular|Mini|Micro|Line|Linear|Broken|Bulk|Stroke|Svg|\d+)+$/;
 const HORIZONTAL = /(Left|Right|Back|Forward|Next|Previous|Prev|Before|First|Last)/;
 const VERTICAL = /(Up|Down|Top|Bottom|North|South)/;
 
 /** Normalize an icon component name: FaArrowRight / IconChevronLeft / ArrowRightIcon → ArrowRight / ChevronLeft. */
 export function normalizeIconName(name: string): string {
   let n = name.split(".").pop() ?? name;
-  n = n.replace(/^Icon(?=[A-Z])/, "").replace(LIB_PREFIX, "").replace(/^fa(?=[A-Z])/, "");
+  n = n
+    .replace(/^Icon(?=[A-Z])/, "")
+    .replace(LIB_PREFIX, "")
+    .replace(/^fa(?=[A-Z])/, "");
   n = n.replace(VARIANT_SUFFIX, "");
   return n;
 }
@@ -43,7 +75,9 @@ export function isDirectionalIconId(id: string): boolean {
   const s = id.toLowerCase();
   if (/(^|[-_:/])(up|down|top|bottom)([-_]|$)/.test(s)) return false;
   if (/left[-_]right|right[-_]left/.test(s)) return false;
-  return /(^|[-_:/])(arrow|arrows|chevron|chevrons|caret|angle|angles|navigate|long-arrow)([-_a-z0-9]*?)[-_](left|right|back|forward|next|prev|previous|before)([-_]|$)/.test(s);
+  return /(^|[-_:/])(arrow|arrows|chevron|chevrons|caret|angle|angles|navigate|long-arrow)([-_a-z0-9]*?)[-_](left|right|back|forward|next|prev|previous|before)([-_]|$)/.test(
+    s,
+  );
 }
 
 const ICON_FONT_CLASS = /^(?:fa|bi|mdi|ri|bx|bxs|lni|ti|ph|la|las|lar|icon)-([a-z0-9-]+)$/;
@@ -60,7 +94,9 @@ function staticClassTokens(attr: Attribute | undefined): string[] | null {
     const t = attr.value.text.trim();
     const m = t.match(/^(?:cn|clsx|cx|twMerge|twJoin|classNames|classnames)\(([\s\S]*)\)$/);
     if (m && /^(\s*("[^"]*"|'[^']*'|`[^`$]*`)\s*,?)*\s*$/.test(m[1]!)) {
-      return [...m[1]!.matchAll(/"([^"]*)"|'([^']*)'|`([^`]*)`/g)].flatMap((x) => (x[1] ?? x[2] ?? x[3] ?? "").split(/\s+/)).filter(Boolean);
+      return [...m[1]!.matchAll(/"([^"]*)"|'([^']*)'|`([^`]*)`/g)]
+        .flatMap((x) => (x[1] ?? x[2] ?? x[3] ?? "").split(/\s+/))
+        .filter(Boolean);
     }
     if (/^["'`][^"'`$]*["'`]$/.test(t)) return t.slice(1, -1).split(/\s+/).filter(Boolean);
   }
@@ -76,7 +112,12 @@ function hasFlipMechanism(el: ElementNode): boolean {
   if (tokens.some((t) => FLIP_TOKEN.test(t))) return true;
   const style = el.getAttr("style");
   if (style) {
-    const text = style.value.kind === "static" ? style.value.value : style.value.kind === "dynamic" ? style.value.text : "";
+    const text =
+      style.value.kind === "static"
+        ? style.value.value
+        : style.value.kind === "dynamic"
+          ? style.value.text
+          : "";
     if (/transform|scale|rotate|direction|rtl|dir/i.test(text)) return true;
     if (style.value.kind === "dynamic" && !text.trim().startsWith("{")) return true; // style={someVar}
   }
@@ -87,7 +128,12 @@ function hasFlipMechanism(el: ElementNode): boolean {
     if (at?.some((t) => FLIP_TOKEN.test(t))) return true;
     if (a.attributes.some((x) => /flip|mirror|rtl/i.test(x.name))) return true;
   }
-  if (el.ancestors.some((a) => DIR_COMPONENT.test(a.name) || a.conditionalTests.some((t) => DIR_TEST.test(t)))) return true;
+  if (
+    el.ancestors.some(
+      (a) => DIR_COMPONENT.test(a.name) || a.conditionalTests.some((t) => DIR_TEST.test(t)),
+    )
+  )
+    return true;
   return false;
 }
 
@@ -103,8 +149,9 @@ export interface Options {
 export const directionalIcons: Rule<Options> = {
   meta: {
     id: "directional-icons",
-    description: "Require a right-to-left flip for arrow and chevron icons that express direction (next, back, forward).",
-    bug: "A \"Next \u2192\" button keeps pointing right in Arabic, where reading \u2014 and therefore \"next\" \u2014 goes left, so users read the arrow as \"back\".",
+    description:
+      "Require a right-to-left flip for arrow and chevron icons that express direction (next, back, forward).",
+    bug: 'A "Next \u2192" button keeps pointing right in Arabic, where reading \u2014 and therefore "next" \u2014 goes left, so users read the arrow as "back".',
     docsUrl: docsUrl("directional-icons"),
     defaultSeverity: "warn",
     fixable: false,
@@ -113,8 +160,19 @@ export const directionalIcons: Rule<Options> = {
   defaultOptions: { icons: [], ignore: [], iconSources: [] },
 
   create(ctx: RuleContext<Options>) {
-    const sources = [...DEFAULT_ICON_SOURCES, ...ctx.project.iconSources, ...ctx.options.iconSources];
-    const fromIconSource = (s: string | undefined) => !!s && sources.some((src) => s === src || s.startsWith(src + "/") || (src.endsWith("*") && s.startsWith(src.slice(0, -1))));
+    const sources = [
+      ...DEFAULT_ICON_SOURCES,
+      ...ctx.project.iconSources,
+      ...ctx.options.iconSources,
+    ];
+    const fromIconSource = (s: string | undefined) =>
+      !!s &&
+      sources.some(
+        (src) =>
+          s === src ||
+          s.startsWith(src + "/") ||
+          (src.endsWith("*") && s.startsWith(src.slice(0, -1))),
+      );
     const ignored = new Set(ctx.options.ignore);
     const tw = ctx.project.tailwind.enabled;
 
@@ -126,7 +184,12 @@ export const directionalIcons: Rule<Options> = {
       const cls = el.getAttr("className");
       if (!tw || cls?.value.kind !== "static") return undefined;
       const end = cls.value.range[1];
-      return [{ desc: 'Add "rtl:-scale-x-100" to className', fix: [{ range: [end, end] as [number, number], text: " rtl:-scale-x-100" }] }];
+      return [
+        {
+          desc: 'Add "rtl:-scale-x-100" to className',
+          fix: [{ range: [end, end] as [number, number], text: " rtl:-scale-x-100" }],
+        },
+      ];
     }
 
     function reportIcon(el: ElementNode, label: string) {
@@ -150,7 +213,10 @@ export const directionalIcons: Rule<Options> = {
         if (known && iconAttr) {
           const v = iconAttr.value;
           const id = v.kind === "static" ? v.value : v.kind === "dynamic" ? v.text.trim() : "";
-          const directional = v.kind === "static" ? isDirectionalIconId(id) : /^fa[A-Z]\w*$/.test(id) && isDirectionalIconName(id, ctx.options.icons);
+          const directional =
+            v.kind === "static"
+              ? isDirectionalIconId(id)
+              : /^fa[A-Z]\w*$/.test(id) && isDirectionalIconName(id, ctx.options.icons);
           if (directional && !hasFlipMechanism(el)) reportIcon(el, id);
           return;
         }

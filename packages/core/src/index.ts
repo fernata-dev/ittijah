@@ -12,8 +12,18 @@ export {
   toPosix,
   type LoadedConfig,
 } from "./config.js";
-export { resolveProjectInfo, clearProjectCache, DEFAULT_PROJECT, BUILD_TIME_FLIPPERS } from "./project.js";
-export { detectLanguage, SUPPORTED_EXTENSIONS, isRtlLang, isRtlLocalePath } from "./languages/detect.js";
+export {
+  resolveProjectInfo,
+  clearProjectCache,
+  DEFAULT_PROJECT,
+  BUILD_TIME_FLIPPERS,
+} from "./project.js";
+export {
+  detectLanguage,
+  SUPPORTED_EXTENSIONS,
+  isRtlLang,
+  isRtlLocalePath,
+} from "./languages/detect.js";
 export { rules, rulesById } from "./rules/index.js";
 export { analyzeText, bidiClass, type Finding, type Check } from "./bidi/analyze.js";
 export { buildTextNodes, decodeEscapes, plain, hasRtl } from "./bidi/message.js";

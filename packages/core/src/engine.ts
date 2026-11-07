@@ -31,20 +31,37 @@ export interface LintTextOptions {
 }
 
 export function defaultRuleConfig(): Map<string, ResolvedRuleConfig> {
-  return new Map(builtinRules.map((r) => [r.meta.id, { severity: r.meta.defaultSeverity, options: {} }]));
+  return new Map(
+    builtinRules.map((r) => [r.meta.id, { severity: r.meta.defaultSeverity, options: {} }]),
+  );
 }
 
 /** Cheap pre-filter: can this JS/TS file possibly produce a diagnostic? */
 function jsWorthParsing(text: string): boolean {
-  return text.includes("<") || hasRtl(text) || /\b(?:cn|clsx|cx|cva|tv|twMerge|classnames|classNames|twJoin)\s*\(|\btw[.`]/.test(text);
+  return (
+    text.includes("<") ||
+    hasRtl(text) ||
+    /\b(?:cn|clsx|cx|cva|tv|twMerge|classnames|classNames|twJoin)\s*\(|\btw[.`]/.test(text)
+  );
 }
 
 export function lintText(opts: LintTextOptions): LintResult {
   const { text, filePath } = opts;
-  const result: LintResult = { filePath, diagnostics: [], errorCount: 0, warningCount: 0, fixableCount: 0 };
+  const result: LintResult = {
+    filePath,
+    diagnostics: [],
+    errorCount: 0,
+    warningCount: 0,
+    fixableCount: 0,
+  };
   const language = detectLanguage(filePath);
   if (!language) return result;
-  if ((language === "json" || language === "yaml" || language === "po") && !hasRtl(text) && !/\\u0[5-8][0-9a-fA-F]{2}/.test(text)) return result;
+  if (
+    (language === "json" || language === "yaml" || language === "po") &&
+    !hasRtl(text) &&
+    !/\\u0[5-8][0-9a-fA-F]{2}/.test(text)
+  )
+    return result;
   if (language === "js" && !jsWorthParsing(text)) return result;
 
   const ruleConfig = opts.rules ?? defaultRuleConfig();
@@ -102,7 +119,11 @@ export function lintText(opts: LintTextOptions): LintResult {
         walkCss(parseCss(text, language), 0, false, emit.cssDeclaration);
         break;
       case "js": {
-        const translationFile = rtlLocale && /(^|[\\/])(locales?|i18n|lang|langs|translations?|messages|dictionaries)[\\/]|[\\/](ar|he|fa|ur)(?:[-_][A-Za-z]{2,4})?\.[mc]?[jt]s$/.test(filePath);
+        const translationFile =
+          rtlLocale &&
+          /(^|[\\/])(locales?|i18n|lang|langs|translations?|messages|dictionaries)[\\/]|[\\/](ar|he|fa|ur)(?:[-_][A-Za-z]{2,4})?\.[mc]?[jt]s$/.test(
+            filePath,
+          );
         walkJs(text, filePath, emit, { translationFile, rtlLocale });
         break;
       }
@@ -143,7 +164,10 @@ export function lintText(opts: LintTextOptions): LintResult {
 }
 
 /** Apply non-overlapping fixes. Returns the new text and how many diagnostics were fixed. */
-export function applyFixes(text: string, diagnostics: Diagnostic[]): { output: string; applied: number } {
+export function applyFixes(
+  text: string,
+  diagnostics: Diagnostic[],
+): { output: string; applied: number } {
   const fixes = diagnostics
     .filter((d) => d.fix?.length)
     .map((d) => ({ edits: [...d.fix!].sort((a, b) => a.range[0] - b.range[0]) }))

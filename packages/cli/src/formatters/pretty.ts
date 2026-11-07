@@ -21,7 +21,11 @@ function wrap(text: string, indent: number, max: number): string {
 
 /** Render invisible bidi controls visibly so the terminal shows what the file contains. */
 function visible(s: string): string {
-  return s.replace(/[‎‏؜‪-‮⁦-⁩]/g, (c) => pc.magenta(`<U+${c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}>`)).replace(/\t/g, " ");
+  return s
+    .replace(/[‎‏؜‪-‮⁦-⁩]/g, (c) =>
+      pc.magenta(`<U+${c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}>`),
+    )
+    .replace(/\t/g, " ");
 }
 
 function codeFrame(source: string, d: Diagnostic): string {
@@ -32,16 +36,28 @@ function codeFrame(source: string, d: Diagnostic): string {
   const MAX = width() - gutter - 10;
   // keep long (minified) lines readable: window around the column
   let start = 0;
-  if (lineText.length > MAX) start = Math.max(0, Math.min(d.column - 1 - Math.floor(MAX / 3), lineText.length - MAX));
-  const slice = (t: string) => (start > 0 ? "…" : "") + t.slice(start, start + MAX) + (t.length > start + MAX ? "…" : "");
+  if (lineText.length > MAX)
+    start = Math.max(0, Math.min(d.column - 1 - Math.floor(MAX / 3), lineText.length - MAX));
+  const slice = (t: string) =>
+    (start > 0 ? "…" : "") + t.slice(start, start + MAX) + (t.length > start + MAX ? "…" : "");
   if (d.line > 1 && lineText.length <= MAX) {
     const prev = (lines[d.line - 2] ?? "").replace(/\r$/, "");
-    if (prev.trim()) out.push(pc.dim(`  ${String(d.line - 1).padStart(gutter)} │ ${slice(prev).replace(/\t/g, " ")}`));
+    if (prev.trim())
+      out.push(
+        pc.dim(`  ${String(d.line - 1).padStart(gutter)} │ ${slice(prev).replace(/\t/g, " ")}`),
+      );
   }
-  out.push(`${pc.red(">")} ${pc.dim(String(d.line).padStart(gutter))} ${pc.dim("│")} ${visible(slice(lineText))}`);
+  out.push(
+    `${pc.red(">")} ${pc.dim(String(d.line).padStart(gutter))} ${pc.dim("│")} ${visible(slice(lineText))}`,
+  );
   const caretStart = d.column - 1 - start + (start > 0 ? 1 : 0);
-  const caretLen = d.endLine === d.line ? Math.max(1, d.endColumn - d.column) : Math.max(1, lineText.length - d.column + 1);
-  out.push(`  ${" ".repeat(gutter)} ${pc.dim("│")} ${" ".repeat(Math.max(0, caretStart))}${pc.red("^".repeat(Math.min(caretLen, MAX - caretStart)))}`);
+  const caretLen =
+    d.endLine === d.line
+      ? Math.max(1, d.endColumn - d.column)
+      : Math.max(1, lineText.length - d.column + 1);
+  out.push(
+    `  ${" ".repeat(gutter)} ${pc.dim("│")} ${" ".repeat(Math.max(0, caretStart))}${pc.red("^".repeat(Math.min(caretLen, MAX - caretStart)))}`,
+  );
   return out.map((l) => "    " + l).join("\n");
 }
 
@@ -49,7 +65,9 @@ export const pretty: Formatter = (results: LintResult[], ctx: ReportContext) => 
   const out: string[] = [];
   const w = width();
   out.push("");
-  out.push(`  ${pc.bold(pc.cyan("ittijah"))} ${pc.dim("·")} ${pc.bold("اتجاه")}  ${pc.dim(`v${VERSION} — RTL & bidi linter`)}`);
+  out.push(
+    `  ${pc.bold(pc.cyan("ittijah"))} ${pc.dim("·")} ${pc.bold("اتجاه")}  ${pc.dim(`v${VERSION} — RTL & bidi linter`)}`,
+  );
   out.push("");
   for (const n of ctx.notices) out.push(`  ${pc.blue("ℹ")} ${wrap(n, 4, w)}`);
   if (ctx.notices.length) out.push("");
@@ -71,7 +89,9 @@ export const pretty: Formatter = (results: LintResult[], ctx: ReportContext) => 
       byRule.set(d.ruleId, (byRule.get(d.ruleId) ?? 0) + 1);
       const sev = d.severity === "error" ? pc.red("✖ error") : pc.yellow("▲ warn ");
       const loc = pc.dim(`${d.line}:${d.column}`.padEnd(8));
-      const tags = [pc.dim(d.ruleId), d.fix?.length ? pc.green("fixable") : ""].filter(Boolean).join(pc.dim(" · "));
+      const tags = [pc.dim(d.ruleId), d.fix?.length ? pc.green("fixable") : ""]
+        .filter(Boolean)
+        .join(pc.dim(" · "));
       out.push(`  ${loc}${sev}  ${tags}`);
       out.push(`          ${wrap(d.message, 10, w)}`);
       if (source) out.push(codeFrame(source, d));
@@ -85,18 +105,36 @@ export const pretty: Formatter = (results: LintResult[], ctx: ReportContext) => 
   const total = errors + warnings;
   const secs = (ctx.durationMs / 1000).toFixed(2);
   if (parseErrors.length) {
-    out.push(`  ${pc.yellow("▲")} ${parseErrors.length} file(s) could not be parsed and were skipped:`);
-    for (const r of parseErrors.slice(0, 5)) out.push(pc.dim(`      ${displayPath(r.filePath, ctx.cwd)} — ${r.parseError}`));
-    if (parseErrors.length > 5) out.push(pc.dim(`      … and ${parseErrors.length - 5} more (use --format json to see all)`));
+    out.push(
+      `  ${pc.yellow("▲")} ${parseErrors.length} file(s) could not be parsed and were skipped:`,
+    );
+    for (const r of parseErrors.slice(0, 5))
+      out.push(pc.dim(`      ${displayPath(r.filePath, ctx.cwd)} — ${r.parseError}`));
+    if (parseErrors.length > 5)
+      out.push(pc.dim(`      … and ${parseErrors.length - 5} more (use --format json to see all)`));
     out.push("");
   }
   if (ctx.fixedCount) out.push(`  ${pc.green("✔")} Fixed ${ctx.fixedCount} problem(s).`);
   if (total === 0) {
-    out.push(`  ${pc.green("✔")} ${pc.bold("No RTL problems found")} ${pc.dim(`in ${ctx.filesScanned} files (${secs}s)`)}`);
+    out.push(
+      `  ${pc.green("✔")} ${pc.bold("No RTL problems found")} ${pc.dim(`in ${ctx.filesScanned} files (${secs}s)`)}`,
+    );
   } else {
-    const parts = [errors ? pc.red(`${errors} error${errors === 1 ? "" : "s"}`) : "", warnings ? pc.yellow(`${warnings} warning${warnings === 1 ? "" : "s"}`) : ""].filter(Boolean);
-    out.push(`  ${errors ? pc.red("✖") : pc.yellow("▲")} ${pc.bold(`${total} problem${total === 1 ? "" : "s"}`)} (${parts.join(", ")}) ${pc.dim(`in ${ctx.filesScanned} files (${secs}s)`)}`);
-    out.push(`    ${pc.dim([...byRule.entries()].sort((a, b) => b[1] - a[1]).map(([id, n]) => `${id} ${n}`).join(" · "))}`);
+    const parts = [
+      errors ? pc.red(`${errors} error${errors === 1 ? "" : "s"}`) : "",
+      warnings ? pc.yellow(`${warnings} warning${warnings === 1 ? "" : "s"}`) : "",
+    ].filter(Boolean);
+    out.push(
+      `  ${errors ? pc.red("✖") : pc.yellow("▲")} ${pc.bold(`${total} problem${total === 1 ? "" : "s"}`)} (${parts.join(", ")}) ${pc.dim(`in ${ctx.filesScanned} files (${secs}s)`)}`,
+    );
+    out.push(
+      `    ${pc.dim(
+        [...byRule.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .map(([id, n]) => `${id} ${n}`)
+          .join(" · "),
+      )}`,
+    );
     if (fixable) out.push(`    ${pc.green(`${fixable} fixable with`)} ${pc.bold("--fix")}`);
   }
   out.push("");

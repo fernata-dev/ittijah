@@ -35,7 +35,29 @@ export function detectLanguage(filePath: string): Language | null {
 
 /** BCP-47 primary subtags of languages written right-to-left. */
 export const RTL_LANGS = new Set([
-  "ar", "arc", "ckb", "dv", "fa", "he", "iw", "ks", "ku-arab", "pa-arab", "ps", "sd", "ug", "ur", "yi", "syr", "nqo", "az-arab", "prs", "bal", "glk", "mzn", "lrc",
+  "ar",
+  "arc",
+  "ckb",
+  "dv",
+  "fa",
+  "he",
+  "iw",
+  "ks",
+  "ku-arab",
+  "pa-arab",
+  "ps",
+  "sd",
+  "ug",
+  "ur",
+  "yi",
+  "syr",
+  "nqo",
+  "az-arab",
+  "prs",
+  "bal",
+  "glk",
+  "mzn",
+  "lrc",
 ]);
 
 export function isRtlLang(tag: string): boolean {

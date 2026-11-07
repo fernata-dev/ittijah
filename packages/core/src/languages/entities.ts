@@ -1,9 +1,28 @@
 import type { Decoded } from "../bidi/message.js";
 
 const NAMED: Record<string, string> = {
-  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00A0", lrm: "\u200E", rlm: "\u200F",
-  zwj: "\u200D", zwnj: "\u200C", hellip: "\u2026", mdash: "\u2014", ndash: "\u2013", copy: "\u00A9", reg: "\u00AE", trade: "\u2122",
-  laquo: "\u00AB", raquo: "\u00BB", times: "\u00D7", minus: "\u2212", rarr: "\u2192", larr: "\u2190",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: "\u00A0",
+  lrm: "\u200E",
+  rlm: "\u200F",
+  zwj: "\u200D",
+  zwnj: "\u200C",
+  hellip: "\u2026",
+  mdash: "\u2014",
+  ndash: "\u2013",
+  copy: "\u00A9",
+  reg: "\u00AE",
+  trade: "\u2122",
+  laquo: "\u00AB",
+  raquo: "\u00BB",
+  times: "\u00D7",
+  minus: "\u2212",
+  rarr: "\u2192",
+  larr: "\u2190",
 };
 
 /** Decode HTML character references, mapping each output char to the whole reference. */

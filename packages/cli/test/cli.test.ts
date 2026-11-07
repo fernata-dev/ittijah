@@ -64,7 +64,11 @@ describe("ittijah CLI", () => {
     project({ "a.css": CSS, "locales/ar.json": AR });
     expect(await main([".", "--rule", "bidi-unsafe-string", "--format", "json"], dir)).toBe(1);
     const report = JSON.parse(out.join(""));
-    expect(report.results.flatMap((r: { diagnostics: { ruleId: string }[] }) => r.diagnostics.map((d) => d.ruleId))).toEqual(["bidi-unsafe-string"]);
+    expect(
+      report.results.flatMap((r: { diagnostics: { ruleId: string }[] }) =>
+        r.diagnostics.map((d) => d.ruleId),
+      ),
+    ).toEqual(["bidi-unsafe-string"]);
   });
 
   it("json format", async () => {
@@ -73,7 +77,11 @@ describe("ittijah CLI", () => {
     const report = JSON.parse(out.join(""));
     expect(report.summary.errors).toBe(1);
     expect(report.results[0].filePath).toBe("locales/ar.json");
-    expect(report.results[0].diagnostics[0]).toMatchObject({ line: 1, text: "@ittijah", ruleId: "bidi-unsafe-string" });
+    expect(report.results[0].diagnostics[0]).toMatchObject({
+      line: 1,
+      text: "@ittijah",
+      ruleId: "bidi-unsafe-string",
+    });
   });
 
   it("sarif format is valid SARIF 2.1.0 with relative URIs", async () => {
@@ -82,13 +90,24 @@ describe("ittijah CLI", () => {
     const sarif = JSON.parse(readFileSync(join(dir, "out.sarif"), "utf8"));
     expect(sarif.version).toBe("2.1.0");
     const run = sarif.runs[0];
-    expect(run.tool.driver.rules.map((r: { id: string }) => r.id)).toContain("no-physical-properties");
+    expect(run.tool.driver.rules.map((r: { id: string }) => r.id)).toContain(
+      "no-physical-properties",
+    );
     expect(run.results[0]).toMatchObject({
       ruleId: "no-physical-properties",
       level: "error",
-      locations: [{ physicalLocation: { artifactLocation: { uri: "src/a.css", uriBaseId: "%SRCROOT%" }, region: { startLine: 1, startColumn: 6 } } }],
+      locations: [
+        {
+          physicalLocation: {
+            artifactLocation: { uri: "src/a.css", uriBaseId: "%SRCROOT%" },
+            region: { startLine: 1, startColumn: 6 },
+          },
+        },
+      ],
     });
-    expect(run.results[0].fixes[0].artifactChanges[0].replacements[0].insertedContent.text).toBe("margin-inline-start");
+    expect(run.results[0].fixes[0].artifactChanges[0].replacements[0].insertedContent.text).toBe(
+      "margin-inline-start",
+    );
   });
 
   it("respects .gitignore in git repositories", async () => {
@@ -108,7 +127,14 @@ describe("ittijah CLI", () => {
   });
 
   it("config: ignore + rule off", async () => {
-    project({ "a.css": CSS, "legacy/b.css": CSS, "ittijah.config.json": JSON.stringify({ ignore: ["legacy/**"], rules: { "no-physical-properties": "warn" } }) });
+    project({
+      "a.css": CSS,
+      "legacy/b.css": CSS,
+      "ittijah.config.json": JSON.stringify({
+        ignore: ["legacy/**"],
+        rules: { "no-physical-properties": "warn" },
+      }),
+    });
     expect(await main(["."], dir)).toBe(0);
     expect(out.join("")).toContain("1 problem");
   });
@@ -136,7 +162,10 @@ describe("ittijah CLI", () => {
   });
 
   it("notices build-time flipping", async () => {
-    project({ "package.json": JSON.stringify({ devDependencies: { rtlcss: "^4.0.0" } }), "a.css": CSS });
+    project({
+      "package.json": JSON.stringify({ devDependencies: { rtlcss: "^4.0.0" } }),
+      "a.css": CSS,
+    });
     expect(await main(["."], dir)).toBe(0);
     expect(out.join("")).toContain('"rtlcss" flips your stylesheets');
   });

@@ -1,5 +1,13 @@
 import type { AtRule, ChildNode, Container, Declaration, Root, Rule as CssRule } from "postcss";
-import type { ClassListNode, CssDeclarationNode, Fix, Rule, RuleContext, StyleObjectNode, StyleProp } from "../types.js";
+import type {
+  ClassListNode,
+  CssDeclarationNode,
+  Fix,
+  Rule,
+  RuleContext,
+  StyleObjectNode,
+  StyleProp,
+} from "../types.js";
 import { docsUrl } from "./util.js";
 
 // ---------------------------------------------------------------------------------------
@@ -58,9 +66,11 @@ const STYLE_VALUE_MAP: Record<string, Record<string, string>> = {
 // Tailwind
 // ---------------------------------------------------------------------------------------
 
-const SPACING_VALUE = /^(?:\d+(?:\.\d+)?|px|auto|full|\d+\/\d+|\[[^\]]+\]|\([^)]+\)|screen|min|max|fit|svw|lvw|dvw)$/;
+const SPACING_VALUE =
+  /^(?:\d+(?:\.\d+)?|px|auto|full|\d+\/\d+|\[[^\]]+\]|\([^)]+\)|screen|min|max|fit|svw|lvw|dvw)$/;
 const RADIUS_VALUE = /^(?:none|xs|sm|md|lg|xl|2xl|3xl|4xl|full|\[[^\]]+\]|\([^)]+\))$/;
-const BORDER_VALUE = /^(?:\d+|\[[^\]]+\]|\([^)]+\)|transparent|current|inherit|black|white|[a-z]+-\d{2,3}(?:\/\d+)?|[a-z]+\/\d+)$/;
+const BORDER_VALUE =
+  /^(?:\d+|\[[^\]]+\]|\([^)]+\)|transparent|current|inherit|black|white|[a-z]+-\d{2,3}(?:\/\d+)?|[a-z]+\/\d+)$/;
 
 export interface TailwindMatch {
   family: string;
@@ -75,25 +85,64 @@ export function matchTailwindUtility(base: string): TailwindMatch | null {
   let m: RegExpMatchArray | null;
   if ((m = base.match(/^(m|p|scroll-m|scroll-p)([lr])-(.+)$/)) && SPACING_VALUE.test(m[3]!)) {
     const side = m[2] as "l" | "r";
-    return { family: m[1]!, side, suffix: m[3]!, replacement: `${m[1]}${side === "l" ? "s" : "e"}-${m[3]}`, needsFloat: false };
+    return {
+      family: m[1]!,
+      side,
+      suffix: m[3]!,
+      replacement: `${m[1]}${side === "l" ? "s" : "e"}-${m[3]}`,
+      needsFloat: false,
+    };
   }
   if ((m = base.match(/^text-(left|right)$/))) {
-    return { family: "text-align", side: m[1] === "left" ? "l" : "r", suffix: "", replacement: m[1] === "left" ? "text-start" : "text-end", needsFloat: false };
+    return {
+      family: "text-align",
+      side: m[1] === "left" ? "l" : "r",
+      suffix: "",
+      replacement: m[1] === "left" ? "text-start" : "text-end",
+      needsFloat: false,
+    };
   }
   if ((m = base.match(/^(float|clear)-(left|right)$/))) {
-    return { family: m[1]!, side: m[2] === "left" ? "l" : "r", suffix: "", replacement: `${m[1]}-${m[2] === "left" ? "start" : "end"}`, needsFloat: true };
+    return {
+      family: m[1]!,
+      side: m[2] === "left" ? "l" : "r",
+      suffix: "",
+      replacement: `${m[1]}-${m[2] === "left" ? "start" : "end"}`,
+      needsFloat: true,
+    };
   }
   if ((m = base.match(/^(left|right)-(.+)$/)) && SPACING_VALUE.test(m[2]!)) {
-    return { family: "inset", side: m[1] === "left" ? "l" : "r", suffix: m[2]!, replacement: `${m[1] === "left" ? "start" : "end"}-${m[2]}`, needsFloat: false };
+    return {
+      family: "inset",
+      side: m[1] === "left" ? "l" : "r",
+      suffix: m[2]!,
+      replacement: `${m[1] === "left" ? "start" : "end"}-${m[2]}`,
+      needsFloat: false,
+    };
   }
   if ((m = base.match(/^border-([lr])(?:-(.+))?$/)) && (!m[2] || BORDER_VALUE.test(m[2]))) {
     const side = m[1] as "l" | "r";
-    return { family: "border", side, suffix: m[2] ?? "", replacement: `border-${side === "l" ? "s" : "e"}${m[2] ? "-" + m[2] : ""}`, needsFloat: false };
+    return {
+      family: "border",
+      side,
+      suffix: m[2] ?? "",
+      replacement: `border-${side === "l" ? "s" : "e"}${m[2] ? "-" + m[2] : ""}`,
+      needsFloat: false,
+    };
   }
-  if ((m = base.match(/^rounded-(l|r|tl|tr|bl|br)(?:-(.+))?$/)) && (!m[2] || RADIUS_VALUE.test(m[2]))) {
+  if (
+    (m = base.match(/^rounded-(l|r|tl|tr|bl|br)(?:-(.+))?$/)) &&
+    (!m[2] || RADIUS_VALUE.test(m[2]))
+  ) {
     const map: Record<string, string> = { l: "s", r: "e", tl: "ss", tr: "se", bl: "es", br: "ee" };
     const side = m[1] as TailwindMatch["side"];
-    return { family: "rounded", side, suffix: m[2] ?? "", replacement: `rounded-${map[side]}${m[2] ? "-" + m[2] : ""}`, needsFloat: false };
+    return {
+      family: "rounded",
+      side,
+      suffix: m[2] ?? "",
+      replacement: `rounded-${map[side]}${m[2] ? "-" + m[2] : ""}`,
+      needsFloat: false,
+    };
   }
   return null;
 }
@@ -140,7 +189,8 @@ const DIR_VARIANT = /^(rtl|ltr)$|dir[=-]|\[dir|:dir\(|^group-(rtl|ltr)|^peer-(rt
 // CSS helpers
 // ---------------------------------------------------------------------------------------
 
-const DIR_SELECTOR = /\[\s*dir\b|:dir\(|\.(?:rtl|ltr)\b|\[class[*~^|]?=["']?(?:rtl|ltr)|:lang\(|\[lang\b/i;
+const DIR_SELECTOR =
+  /\[\s*dir\b|:dir\(|\.(?:rtl|ltr)\b|\[class[*~^|]?=["']?(?:rtl|ltr)|:lang\(|\[lang\b/i;
 const DIR_AT_PARAMS = /\b(?:rtl|ltr|dir|direction)\b/i;
 const RTL_DIRECTIVE = /^!?\s*(?:rtl:|@noflip|@flip)/i;
 
@@ -156,7 +206,8 @@ const rootInfoCache = new WeakMap<Root, RootInfo>();
 
 function selectorChain(node: ChildNode | Container): string[] {
   const chain: string[] = [];
-  let p: Container | undefined = node.type === "rule" ? (node as CssRule) : (node.parent as Container | undefined);
+  let p: Container | undefined =
+    node.type === "rule" ? (node as CssRule) : (node.parent as Container | undefined);
   while (p && p.type !== "root") {
     if (p.type === "rule") chain.unshift((p as CssRule).selector);
     else if (p.type === "atrule") chain.unshift(`@${(p as AtRule).name} ${(p as AtRule).params}`);
@@ -173,7 +224,10 @@ function resolvedSelector(rule: CssRule): string {
     if (p.type === "rule") chain.unshift(((p as CssRule).selector.split(",")[0] ?? "").trim());
     p = p.parent as Container | undefined;
   }
-  return chain.reduce((acc, sel) => (acc ? (sel.includes("&") ? sel.replace(/&/g, acc) : `${acc} ${sel}`) : sel), "");
+  return chain.reduce(
+    (acc, sel) => (acc ? (sel.includes("&") ? sel.replace(/&/g, acc) : `${acc} ${sel}`) : sel),
+    "",
+  );
 }
 
 /** Remove direction qualifiers so `[dir=rtl] .a` and `html.rtl .a` both normalize to `.a`. */
@@ -207,10 +261,15 @@ function getRootInfo(root: Root): RootInfo {
         info.hasDirScopedRules = true;
         info.overridden.add(stripDir(resolvedSelector(node)));
       }
-    } else if (node.type === "atrule" && /^(include|mixin)$/.test(node.name) && DIR_AT_PARAMS.test(node.params)) {
+    } else if (
+      node.type === "atrule" &&
+      /^(include|mixin)$/.test(node.name) &&
+      DIR_AT_PARAMS.test(node.params)
+    ) {
       info.hasDirScopedRules = true;
       const parent = node.parent;
-      if (parent?.type === "rule") info.overridden.add(stripDir(resolvedSelector(parent as CssRule)));
+      if (parent?.type === "rule")
+        info.overridden.add(stripDir(resolvedSelector(parent as CssRule)));
     }
   });
   if (open !== null) info.ignoredRanges.push([open, Number.POSITIVE_INFINITY]);
@@ -226,14 +285,19 @@ function precededByDirective(node: ChildNode): boolean {
 function isRtlIgnored(decl: Declaration, info: RootInfo): boolean {
   if (precededByDirective(decl)) return true;
   const rawValue = (decl.raws as { value?: { raw?: string } }).value?.raw ?? "";
-  if (/\/\*\s*!?\s*(?:rtl:|@noflip)/i.test(rawValue) || /\/\*\s*!?\s*(?:rtl:|@noflip)/i.test(decl.raws.between ?? "")) return true;
+  if (
+    /\/\*\s*!?\s*(?:rtl:|@noflip)/i.test(rawValue) ||
+    /\/\*\s*!?\s*(?:rtl:|@noflip)/i.test(decl.raws.between ?? "")
+  )
+    return true;
   const offset = decl.source?.start?.offset ?? 0;
   if (info.ignoredRanges.some(([a, b]) => offset >= a && offset <= b)) return true;
   let p: Container | undefined = decl.parent as Container | undefined;
   while (p && p.type !== "root") {
     if (precededByDirective(p as ChildNode)) return true;
     const first = p.first;
-    if (first?.type === "comment" && /^!?\s*(?:rtl:ignore|@noflip)/i.test(first.text.trim())) return true;
+    if (first?.type === "comment" && /^!?\s*(?:rtl:ignore|@noflip)/i.test(first.text.trim()))
+      return true;
     p = p.parent as Container | undefined;
   }
   return false;
@@ -270,7 +334,8 @@ const GENERATED_RTL_FILE = /(?:^|[./\\_-])rtl\.s?css$/i;
 export const noPhysicalProperties: Rule<Options> = {
   meta: {
     id: "no-physical-properties",
-    description: "Disallow physical left/right CSS properties, values and Tailwind utilities; use logical (start/end) equivalents.",
+    description:
+      "Disallow physical left/right CSS properties, values and Tailwind utilities; use logical (start/end) equivalents.",
     bug: "A sidebar with `margin-left: 16px` keeps its gap on the left in Arabic, so the content touches the right screen edge while the gap sits on the wrong side.",
     docsUrl: docsUrl("no-physical-properties"),
     defaultSeverity: "error",
@@ -319,7 +384,13 @@ export const noPhysicalProperties: Rule<Options> = {
           // left: 50%; transform: translateX(-50%) centering is direction-neutral
           if (/(^|[^\d.])50%/.test(value)) return;
           // left: 0 + width: 100% covers the whole line in both directions
-          if (/^0(px|rem|em|%)?$/.test(value) && siblings.some((d) => /^(width|min-width)$/i.test(d.prop) && /^100(%|vw)$/.test(norm(d.value)))) return;
+          if (
+            /^0(px|rem|em|%)?$/.test(value) &&
+            siblings.some(
+              (d) => /^(width|min-width)$/i.test(d.prop) && /^100(%|vw)$/.test(norm(d.value)),
+            )
+          )
+            return;
         }
       }
 
@@ -336,7 +407,9 @@ export const noPhysicalProperties: Rule<Options> = {
         const src = file.text.slice(valueStart, valueStart + 200);
         const m = src.match(/\b(left|right)\b/i);
         const kw = (m?.[1] ?? value).toLowerCase();
-        range = m ? [valueStart + m.index!, valueStart + m.index! + m[1]!.length] : [start, start + decl.prop.length];
+        range = m
+          ? [valueStart + m.index!, valueStart + m.index! + m[1]!.length]
+          : [start, start + decl.prop.length];
         message = `"${decl.prop}: ${kw}" is physical: in RTL it stays ${kw}. Use "${decl.prop}: ${toValue}".`;
         fix = m ? [{ range, text: toValue! }] : undefined;
       }
@@ -348,7 +421,8 @@ export const noPhysicalProperties: Rule<Options> = {
     function classList(node: ClassListNode) {
       if (!options.tailwind || flipped) return;
       const tw = project.tailwind;
-      const htmlCdn = file.language === "html" && /cdn\.tailwindcss\.com|@tailwindcss\/browser/.test(file.text);
+      const htmlCdn =
+        file.language === "html" && /cdn\.tailwindcss\.com|@tailwindcss\/browser/.test(file.text);
       if (!tw.enabled && !htmlCdn) return;
       const parsed = node.tokens.map((t) => ({ token: t, cls: parseTailwindClass(t.value) }));
       // Any rtl:/ltr: variant in the list means direction is handled by hand.
@@ -359,27 +433,41 @@ export const noPhysicalProperties: Rule<Options> = {
       if (!matches.length) return;
       // In incomplete lists (conditionals, variants) only tokens of the same literal apply together.
       const key = (p: (typeof matches)[number]) =>
-        `${node.complete ? "" : p.token.group ?? ""}|${p.cls.variants.join(":")}|${p.cls.negative}|${p.match!.family}|${p.match!.suffix}`;
+        `${node.complete ? "" : (p.token.group ?? "")}|${p.cls.variants.join(":")}|${p.cls.negative}|${p.match!.family}|${p.match!.suffix}`;
       const sides = new Map<string, Set<string>>();
       for (const p of matches) {
         const k = key(p);
         if (!sides.has(k)) sides.set(k, new Set());
         sides.get(k)!.add(p.match!.side);
       }
-      const centered = parsed.some((p) => /^-?translate-x-(1\/2|\[-?50%\])$/.test(p.cls.base) || p.cls.base === "-translate-x-1/2");
+      const centered = parsed.some(
+        (p) =>
+          /^-?translate-x-(1\/2|\[-?50%\])$/.test(p.cls.base) || p.cls.base === "-translate-x-1/2",
+      );
       const logicalOk = htmlCdn || tw.logical;
       for (const p of matches) {
         const m = p.match!;
         const s = sides.get(key(p))!;
-        const pairs: Record<string, string> = { l: "r", r: "l", tl: "tr", tr: "tl", bl: "br", br: "bl" };
+        const pairs: Record<string, string> = {
+          l: "r",
+          r: "l",
+          tl: "tr",
+          tr: "tl",
+          bl: "br",
+          br: "bl",
+        };
         if (s.has(pairs[m.side]!)) continue; // ml-4 mr-4, left-0 right-0: symmetric
-        if (m.family === "inset" && (centered || m.suffix === "1/2" || /\[50%\]/.test(m.suffix))) continue;
+        if (m.family === "inset" && (centered || m.suffix === "1/2" || /\[50%\]/.test(m.suffix)))
+          continue;
         const prefix = p.cls.variants.length ? p.cls.variants.join(":") + ":" : "";
         const neg = p.cls.negative ? "-" : "";
-        const imp = (s: string) => (p.cls.important === "prefix" ? "!" + s : p.cls.important === "suffix" ? s + "!" : s);
+        const imp = (s: string) =>
+          p.cls.important === "prefix" ? "!" + s : p.cls.important === "suffix" ? s + "!" : s;
         const replacement = prefix + imp(neg + m.replacement);
         const supported = m.needsFloat ? htmlCdn || tw.logicalFloat : logicalOk;
-        const versionNote = supported ? "" : ` (needs Tailwind ${m.needsFloat ? "3.4" : "3.3"}+; you have ${tw.version ?? "an older version"})`;
+        const versionNote = supported
+          ? ""
+          : ` (needs Tailwind ${m.needsFloat ? "3.4" : "3.3"}+; you have ${tw.version ?? "an older version"})`;
         ctx.report({
           message: `"${p.token.value}" is a physical utility: it does not flip in RTL. Use "${replacement}"${versionNote}.`,
           range: p.token.range,
@@ -391,7 +479,8 @@ export const noPhysicalProperties: Rule<Options> = {
     function styleObject(node: StyleObjectNode) {
       if (!options.styleObjects || project.reactNative) return;
       const byKey = new Map<string, StyleProp>(node.props.map((p) => [p.key, p]));
-      const staticVal = (p: StyleProp | undefined) => (p && p.value.kind === "static" ? String(p.value.value).trim().toLowerCase() : null);
+      const staticVal = (p: StyleProp | undefined) =>
+        p && p.value.kind === "static" ? String(p.value.value).trim().toLowerCase() : null;
       for (const p of node.props) {
         const toKey = STYLE_KEY_MAP[p.key];
         const vmap = STYLE_VALUE_MAP[p.key];
@@ -399,17 +488,31 @@ export const noPhysicalProperties: Rule<Options> = {
         if (toKey) {
           const kebab = p.key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
           if (ignored.has(kebab)) continue;
-          const otherKey = p.key.includes("Left") ? p.key.replace("Left", "Right") : p.key.includes("Right") ? p.key.replace("Right", "Left") : p.key === "left" ? "right" : "left";
+          const otherKey = p.key.includes("Left")
+            ? p.key.replace("Left", "Right")
+            : p.key.includes("Right")
+              ? p.key.replace("Right", "Left")
+              : p.key === "left"
+                ? "right"
+                : "left";
           const twin = byKey.get(otherKey);
           if (twin && val !== null && staticVal(twin) === val) continue;
-          if ((p.key === "left" || p.key === "right") && val !== null && /(^|[^\d.])50%/.test(val)) continue;
+          if ((p.key === "left" || p.key === "right") && val !== null && /(^|[^\d.])50%/.test(val))
+            continue;
           ctx.report({
             message: `Style key "${p.key}" is physical: in RTL it stays on the ${/left/i.test(p.key) ? "left" : "right"}. Use "${toKey}".`,
             range: p.keyRange,
             fix: [{ range: p.keyRange, text: toKey }],
           });
-        } else if (vmap && val !== null && vmap[val] && p.value.kind === "static" && p.value.quoted) {
-          const kebab = p.key === "textAlign" ? "text-align" : p.key === "cssFloat" ? "float" : p.key;
+        } else if (
+          vmap &&
+          val !== null &&
+          vmap[val] &&
+          p.value.kind === "static" &&
+          p.value.quoted
+        ) {
+          const kebab =
+            p.key === "textAlign" ? "text-align" : p.key === "cssFloat" ? "float" : p.key;
           if (ignored.has(kebab)) continue;
           ctx.report({
             message: `"${p.key}: '${val}'" is physical: in RTL it stays ${val}. Use "${vmap[val]}".`,
