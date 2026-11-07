@@ -1,0 +1,14 @@
+name: Bug / missed problem
+description: A crash, a wrong fix, or an RTL bug Ittijah should have caught.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: "Command, output, and what you expected." }
+    validations: { required: true }
+  - type: textarea
+    id: code
+    attributes: { label: Reproduction, render: text }
+  - type: input
+    id: env
+    attributes: { label: "Ittijah / Node / OS", placeholder: "0.1.0 / 22 / macOS" }

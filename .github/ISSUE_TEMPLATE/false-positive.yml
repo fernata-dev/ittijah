@@ -1,0 +1,21 @@
+name: False positive
+description: Ittijah reported something that renders correctly. (The most valuable report you can file.)
+labels: ["false-positive"]
+body:
+  - type: input
+    id: rule
+    attributes: { label: Rule, placeholder: "bidi-unsafe-string [neutral-before-ltr]" }
+    validations: { required: true }
+  - type: textarea
+    id: code
+    attributes: { label: Smallest code that reproduces it, render: text }
+    validations: { required: true }
+  - type: textarea
+    id: rendering
+    attributes:
+      label: What actually renders
+      description: Screenshot or description of the RTL rendering in a browser, proving there is no bug.
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Ittijah version, placeholder: "0.1.0" }
