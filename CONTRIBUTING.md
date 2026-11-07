@@ -27,7 +27,7 @@ Requires Node 20+ and pnpm 10.
 
 ## Reporting a false positive
 
-This is the most valuable issue you can open. Use the *False positive* template and include the
+This is the most valuable issue you can open. Use the _False positive_ template and include the
 smallest snippet that reproduces it, plus what actually renders in the browser.
 
 ## Project layout

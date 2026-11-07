@@ -2,9 +2,9 @@
 
 > Require `dir` on `<html>` (with `lang`), and `dir="auto"` on inputs and containers that show user-generated text.
 
-| Severity | Fixable | Applies to |
-|---|---|---|
-| `warn` | yes, when the value is certain | HTML, JSX/TSX (incl. Next.js `<Html>`) |
+| Severity | Fixable                        | Applies to                             |
+| -------- | ------------------------------ | -------------------------------------- |
+| `warn`   | yes, when the value is certain | HTML, JSX/TSX (incl. Next.js `<Html>`) |
 
 ## The real bugs
 
@@ -22,8 +22,9 @@
 
 ```html
 <html lang="ar">
-<textarea name="message"></textarea>
-<input type="search">
+  <textarea name="message"></textarea>
+  <input type="search" />
+</html>
 ```
 
 ```tsx
@@ -35,7 +36,8 @@
 
 ```html
 <html lang="ar" dir="rtl">
-<textarea name="message" dir="auto"></textarea>
+  <textarea name="message" dir="auto"></textarea>
+</html>
 ```
 
 ```tsx
@@ -46,12 +48,12 @@
 
 ## Zero false-positive policy
 
-* `<html lang="en">` without `dir` is fine, because the default is `ltr`.
-* Inputs that only hold LTR or numeric content are skipped: `email`, `url`, `tel`, `number`,
+- `<html lang="en">` without `dir` is fine, because the default is `ltr`.
+- Inputs that only hold LTR or numeric content are skipped: `email`, `url`, `tel`, `number`,
   `password`; `inputMode`/`autoComplete` hints; `spellCheck={false}`; names, classes, placeholders or
   bound values mentioning url, link, token, key, color, hex, code, phone, handle…
-* Invisible inputs (`hidden`, `aria-hidden`, `opacity: 0`) and spread props are skipped.
-* User content is only detected for clear expressions (`comment.body`, `message.text`, `post.content`,
+- Invisible inputs (`hidden`, `aria-hidden`, `opacity: 0`) and spread props are skipped.
+- User content is only detected for clear expressions (`comment.body`, `message.text`, `post.content`,
   `user.bio`, `answer.text`), never for error, alert or validation messages.
 
 ## Autofix
@@ -62,5 +64,12 @@ back to its parent's direction in current browsers.
 ## Options
 
 ```json
-{ "rules": { "missing-dir-attribute": ["warn", { "checkHtml": true, "requireLang": true, "checkInputs": true, "checkUserContent": true }] } }
+{
+  "rules": {
+    "missing-dir-attribute": [
+      "warn",
+      { "checkHtml": true, "requireLang": true, "checkInputs": true, "checkUserContent": true }
+    ]
+  }
+}
 ```

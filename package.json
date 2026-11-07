@@ -16,7 +16,8 @@
     "typecheck": "tsc -b packages/core packages/cli packages/eslint-plugin",
     "validate": "node scripts/validate.mjs",
     "bench": "node scripts/bench.mjs",
-    "site": "node website/build.mjs"
+    "site": "node website/build.mjs",
+    "verify-rendering": "node scripts/verify-rendering.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

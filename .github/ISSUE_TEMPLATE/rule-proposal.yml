@@ -14,4 +14,8 @@ body:
     validations: { required: true }
   - type: textarea
     id: fp
-    attributes: { label: How could it produce false positives?, description: "And how would the rule stay silent in those cases?" }
+    attributes:
+      {
+        label: How could it produce false positives?,
+        description: "And how would the rule stay silent in those cases?",
+      }

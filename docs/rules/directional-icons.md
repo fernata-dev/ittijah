@@ -2,14 +2,16 @@
 
 > Require an RTL flip for arrow and chevron icons that express direction (next, back, forward).
 
-| Severity | Fixable | Applies to |
-|---|---|---|
-| `warn` | suggestion only | JSX/TSX (icon packages), HTML/JSX icon-font classes |
+| Severity | Fixable         | Applies to                                          |
+| -------- | --------------- | --------------------------------------------------- |
+| `warn`   | suggestion only | JSX/TSX (icon packages), HTML/JSX icon-font classes |
 
 ## The real bug
 
 ```tsx
-<a href="/checkout">Continue <ChevronRight /></a>
+<a href="/checkout">
+  Continue <ChevronRight />
+</a>
 ```
 
 In Arabic, reading and therefore "forward" go **leftwards**. The chevron keeps pointing right, so
@@ -40,7 +42,9 @@ import { ChevronRight, ArrowLeft } from "lucide-react";
 ```
 
 ```css
-[dir="rtl"] .icon-directional { transform: scaleX(-1); }
+[dir="rtl"] .icon-directional {
+  transform: scaleX(-1);
+}
 ```
 
 ## What counts as "directional"
@@ -51,11 +55,11 @@ Previous / First / Last. Vertical arrows (`ChevronDown`), diagonal "external lin
 
 ## Zero false-positive policy
 
-* Only icons **imported from known icon packages** are checked: lucide, heroicons, react-icons,
+- Only icons **imported from known icon packages** are checked: lucide, heroicons, react-icons,
   MUI, Tabler, Phosphor, Feather, Ant Design, Radix, Font Awesome, Iconify, Octicons, Carbon,
   Remix, Hugeicons, Fluent… A local `ChevronRight` might already be direction-aware. Add your own
   wrappers with `settings.iconSources`.
-* Not reported when there is a sign of a flip: any `rtl`/`ltr`/`flip`/`mirror`/`dir` class or prop,
+- Not reported when there is a sign of a flip: any `rtl`/`ltr`/`flip`/`mirror`/`dir` class or prop,
   a `transform` style, a computed `className`, spread props, a ternary whose test mentions
   `rtl`/`dir`/`locale`, or a parent with a flip class or a `Directional*`/`Rtl*` wrapper.
 
@@ -64,5 +68,12 @@ Previous / First / Last. Vertical arrows (`ChevronDown`), diagonal "external lin
 ## Options
 
 ```json
-{ "rules": { "directional-icons": ["warn", { "icons": ["MyNextIcon"], "ignore": ["ChevronRight"], "iconSources": ["@/components/icons"] }] } }
+{
+  "rules": {
+    "directional-icons": [
+      "warn",
+      { "icons": ["MyNextIcon"], "ignore": ["ChevronRight"], "iconSources": ["@/components/icons"] }
+    ]
+  }
+}
 ```

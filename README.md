@@ -44,12 +44,12 @@ false-positive rate is published: see the [validation report](./docs/validation.
 
 ## Rules
 
-| Rule | What it catches | Default | Fix |
-|---|---|---|---|
-| [`no-physical-properties`](./docs/rules/no-physical-properties.md) | `margin-left`, `text-align: left`, `float: right`, `ml-4`, `rounded-l`, `style={{ marginLeft }}` … | error | ✅ |
-| [`directional-icons`](./docs/rules/directional-icons.md) | `<ChevronRight />`, `fa-arrow-right` without an RTL flip | warn | 💡 |
-| [`bidi-unsafe-string`](./docs/rules/bidi-unsafe-string.md) | `@user` → `user@`, `C++` → `++C`, `-5` → `5-`, scrambled phone numbers, strings starting with Latin text (opt-in) | error | 💡 |
-| [`missing-dir-attribute`](./docs/rules/missing-dir-attribute.md) | `<html lang="ar">` without `dir`, text inputs and user content without `dir="auto"` | warn | ✅ |
+| Rule                                                               | What it catches                                                                                                   | Default | Fix |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ------- | --- |
+| [`no-physical-properties`](./docs/rules/no-physical-properties.md) | `margin-left`, `text-align: left`, `float: right`, `ml-4`, `rounded-l`, `style={{ marginLeft }}` …                | error   | ✅  |
+| [`directional-icons`](./docs/rules/directional-icons.md)           | `<ChevronRight />`, `fa-arrow-right` without an RTL flip                                                          | warn    | 💡  |
+| [`bidi-unsafe-string`](./docs/rules/bidi-unsafe-string.md)         | `@user` → `user@`, `C++` → `++C`, `-5` → `5-`, scrambled phone numbers, strings starting with Latin text (opt-in) | error   | 💡  |
+| [`missing-dir-attribute`](./docs/rules/missing-dir-attribute.md)   | `<html lang="ar">` without `dir`, text inputs and user content without `dir="auto"`                               | warn    | ✅  |
 
 Each rule page explains the rendering bug it prevents, with BAD and GOOD examples.
 
@@ -65,11 +65,11 @@ npx ittijah --explain bidi-unsafe-string
 npx ittijah --init                     # create ittijah.config.json
 ```
 
-| Exit code | Meaning |
-|---|---|
-| `0` | no errors (warnings allowed unless `--max-warnings` is exceeded) |
-| `1` | errors found, or more warnings than `--max-warnings` |
-| `2` | invalid usage or configuration |
+| Exit code | Meaning                                                          |
+| --------- | ---------------------------------------------------------------- |
+| `0`       | no errors (warnings allowed unless `--max-warnings` is exceeded) |
+| `1`       | errors found, or more warnings than `--max-warnings`             |
+| `2`       | invalid usage or configuration                                   |
 
 ## Configuration: `ittijah.config.json`
 
@@ -85,7 +85,10 @@ npx ittijah --init                     # create ittijah.config.json
   "ignore": ["legacy/**"],
   "settings": { "tailwind": "auto", "buildTimeFlip": "auto", "reactNative": "auto" },
   "overrides": [
-    { "files": ["locales/*/notifications.json"], "rules": { "bidi-unsafe-string": ["error", { "leadingLtr": true }] } }
+    {
+      "files": ["locales/*/notifications.json"],
+      "rules": { "bidi-unsafe-string": ["error", { "leadingLtr": true }] }
+    }
   ]
 }
 ```
@@ -93,8 +96,10 @@ npx ittijah --init                     # create ittijah.config.json
 Inline suppression works in every language:
 
 ```tsx
-{/* ittijah-disable-next-line no-physical-properties -- the chart axis is physical */}
-<div className="ml-4" />
+{
+  /* ittijah-disable-next-line no-physical-properties -- the chart axis is physical */
+}
+<div className="ml-4" />;
 ```
 
 `ittijah-disable-line`, plus `ittijah-disable` / `ittijah-enable` blocks, are also supported. In
@@ -134,11 +139,11 @@ The JS/TS/JSX rules run inside ESLint, with fixes and suggestions. They work wit
 
 ## Packages
 
-| Package | |
-|---|---|
-| [`ittijah`](./packages/cli) | CLI |
-| [`@ittijah/core`](./packages/core) | rule engine, programmatic API (`lintText`, `applyFixes`) |
-| [`eslint-plugin-ittijah`](./packages/eslint-plugin) | ESLint wrapper |
+| Package                                             |                                                          |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| [`ittijah`](./packages/cli)                         | CLI                                                      |
+| [`@ittijah/core`](./packages/core)                  | rule engine, programmatic API (`lintText`, `applyFixes`) |
+| [`eslint-plugin-ittijah`](./packages/eslint-plugin) | ESLint wrapper                                           |
 
 ## Performance
 
@@ -147,10 +152,10 @@ listed with `git ls-files`, so `.gitignore` semantics are exact.
 
 ## Limitations (honest)
 
-* Vue, Svelte and Angular templates are not parsed yet. Their `.css`/`.json` files are.
-* CSS-in-JS template literals (styled-components, emotion) are not checked.
-* `directional-icons` only knows icons from known packages, so recall is deliberately low.
-* Ittijah cannot see how strings are rendered at runtime. See [design decisions](./docs/design-decisions.md).
+- Vue, Svelte and Angular templates are not parsed yet. Their `.css`/`.json` files are.
+- CSS-in-JS template literals (styled-components, emotion) are not checked.
+- `directional-icons` only knows icons from known packages, so recall is deliberately low.
+- Ittijah cannot see how strings are rendered at runtime. See [design decisions](./docs/design-decisions.md).
 
 ## Contributing
 

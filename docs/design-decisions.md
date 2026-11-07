@@ -1,6 +1,6 @@
 # Design decisions and where I disagreed with the original spec
 
-The spec asked: *"if any requirement is flawed or redundant, tell me before implementing it."*
+The spec asked: _"if any requirement is flawed or redundant, tell me before implementing it."_
 These are the points where the implementation deliberately differs, and why.
 
 ## 1. "Flag strings where terminating punctuation sits at a direction boundary" would cry wolf

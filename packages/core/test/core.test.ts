@@ -44,8 +44,8 @@ describe("bidi classes", () => {
     expect(bidiClass("۵")).toBe("EN");
     expect(bidiClass("@")).toBe("ON");
     expect(bidiClass(" ")).toBe("WS");
-    expect(bidiClass("‎")).toBe("LRM");
-    expect(bidiClass("‏")).toBe("RLM");
+    expect(bidiClass("\u200E")).toBe("LRM");
+    expect(bidiClass("\u200F")).toBe("RLM");
   });
 });
 
@@ -73,7 +73,9 @@ describe("placeholder tokenization", () => {
     expect(nodes.map((n) => n.text)).toEqual([PH_NUMERIC, "واحد", `${PH_NUMERIC} رسائل`]);
   });
   it("collapses isolates and <bdi>, drops inline tags", () => {
-    expect(one("أ ⁨x⁩ <bdi>@a</bdi> <b>ب</b>")[0]!.text).toBe(`أ ${ISOLATED} ${ISOLATED} ب`);
+    expect(one("أ \u2068x\u2069 <bdi>@a</bdi> <b>ب</b>")[0]!.text).toBe(
+      `أ ${ISOLATED} ${ISOLATED} ب`,
+    );
   });
   it("keeps %% as a literal", () => {
     expect(one("50%% خصم")[0]!.text).toBe("50%% خصم");

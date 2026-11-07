@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Versions follow [SemVer
 ## [0.1.0] — 2026-11-07
 
 ### Added
+
 - `@ittijah/core`: rule engine with adapters for CSS/SCSS (postcss), JS/TS/JSX/TSX (Babel),
   HTML (parse5) and translation catalogs (JSON, ARB, YAML, gettext PO); project detection
   (Tailwind version, rtlcss/cssjanus, React Native); `ittijah.config.json` with JSON schema,
@@ -19,6 +20,7 @@ All notable changes to this project are documented here. Versions follow [SemVer
 - Website with landing page, docs and an in-browser bidi playground.
 
 ### Changed during validation
+
 - `bidi-unsafe-string`: `leadingLtr` is opt-in; Hebrew/Arabic prefix hyphens (`ל-998`) and
   `#{id}` are no longer reported.
 - `missing-dir-attribute`: skips invisible inputs, `spellCheck={false}` and LTR-content fields;

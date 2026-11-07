@@ -22,7 +22,7 @@ function wrap(text: string, indent: number, max: number): string {
 /** Render invisible bidi controls visibly so the terminal shows what the file contains. */
 function visible(s: string): string {
   return s
-    .replace(/[‎‏؜‪-‮⁦-⁩]/g, (c) =>
+    .replace(/[\u200E\u200F\u061C\u202A-\u202E\u2066-\u2069]/g, (c) =>
       pc.magenta(`<U+${c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}>`),
     )
     .replace(/\t/g, " ");

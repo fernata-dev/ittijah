@@ -4,13 +4,13 @@ Rules never see raw ASTs. Language **adapters** parse each file and emit a few n
 **events**, and rules subscribe to the events they care about. That is how one rule covers CSS,
 JSX, HTML and translation files at once.
 
-| Event | Emitted for | Node |
-|---|---|---|
-| `cssDeclaration` | CSS/SCSS files, `<style>` blocks, `style=""` attributes | `{ decl: postcss.Declaration, baseOffset, inline }` |
-| `classList` | `className`/`class` attributes, `cn`/`clsx`/`cva`/`tv`/`twMerge` calls, `` tw`…` `` | `{ tokens: [{ value, range, group }], complete, element?, origin }` |
-| `styleObject` | JSX `style={{ … }}` | `{ props: [{ key, keyRange, value }], complete, element? }` |
-| `element` | every JSX and HTML element | `ElementNode` (name, attributes, `hasSpread`, ancestors, import source, enclosing conditionals, children) |
-| `text` | translation values, string/template literals, JSX & HTML text containing RTL letters | `TextNode` (text with placeholder sentinels + offset maps) |
+| Event            | Emitted for                                                                          | Node                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `cssDeclaration` | CSS/SCSS files, `<style>` blocks, `style=""` attributes                              | `{ decl: postcss.Declaration, baseOffset, inline }`                                                       |
+| `classList`      | `className`/`class` attributes, `cn`/`clsx`/`cva`/`tv`/`twMerge` calls, `` tw`…` ``  | `{ tokens: [{ value, range, group }], complete, element?, origin }`                                       |
+| `styleObject`    | JSX `style={{ … }}`                                                                  | `{ props: [{ key, keyRange, value }], complete, element? }`                                               |
+| `element`        | every JSX and HTML element                                                           | `ElementNode` (name, attributes, `hasSpread`, ancestors, import source, enclosing conditionals, children) |
+| `text`           | translation values, string/template literals, JSX & HTML text containing RTL letters | `TextNode` (text with placeholder sentinels + offset maps)                                                |
 
 ## Skeleton
 
@@ -18,7 +18,9 @@ JSX, HTML and translation files at once.
 import type { Rule } from "../types.js";
 import { docsUrl } from "./util.js";
 
-interface Options { strict: boolean }
+interface Options {
+  strict: boolean;
+}
 
 export const myRule: Rule<Options> = {
   meta: {
@@ -34,7 +36,7 @@ export const myRule: Rule<Options> = {
   create(ctx) {
     return {
       element(el) {
-        if (el.hasSpread) return;                       // unknown props: stay silent
+        if (el.hasSpread) return; // unknown props: stay silent
         if (el.name === "marquee" && !el.getAttr("dir")) {
           ctx.report({
             message: "…explain the rendering bug and the fix…",

@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ittijah · اتجاه: the RTL &amp; bidi linter</title>
+    <meta
+      name="description"
+      content="Find RTL and bidirectional-text bugs in CSS, Tailwind, JSX, HTML and translation files before your Arabic and Hebrew users do."
+    />
+    <meta property="og:title" content="Ittijah · اتجاه: the RTL & bidi linter" />
+    <meta
+      property="og:description"
+      content="One engine for CSS, Tailwind, JSX, HTML and i18n catalogs. Validated on real projects."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234fd1c5'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' font-family='sans-serif' font-weight='800' fill='%230b0d12'%3E%D8%A7%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;600;700;800&display=swap"
+    />
+    <link rel="stylesheet" href="assets/site.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap">
+        <a class="logo" href="./"
+          ><span class="logo-mark">ا</span> ittijah <span class="ar">اتجاه</span></a
+        >
+        <nav class="nav-links">
+          <a href="#bugs" data-en="The bugs" data-ar="الأخطاء">The bugs</a>
+          <a href="#playground" data-en="Playground" data-ar="جرّبها">Playground</a>
+          <a href="docs/getting-started.html" data-en="Docs" data-ar="التوثيق">Docs</a>
+          <a href="docs/validation.html" data-en="Validation" data-ar="التحقق">Validation</a>
+          <button
+            class="btn lang-toggle"
+            type="button"
+            data-toggle-lang
+            data-en="العربية"
+            data-ar="English"
+          >
+            العربية
+          </button>
+          <a class="btn" href="https://github.com/fernata-dev/ittijah">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap hero">
+        <span
+          class="eyebrow"
+          data-en="Open source · MIT · v0.1"
+          data-ar="مفتوح المصدر · MIT · الإصدار 0.1"
+          >Open source · MIT · v0.1</span
+        >
+        <h1
+          data-en='Your app speaks Arabic.<br /><span class="grad">Does your layout?</span>'
+          data-ar='تطبيقك بيتكلم عربي.<br /><span class="grad">طب الواجهة؟</span>'
+        >
+          Your app speaks Arabic.<br /><span class="grad">Does your layout?</span>
+        </h1>
+        <p
+          class="lead"
+          data-en="Ittijah finds RTL and bidirectional-text bugs across CSS, Tailwind, JSX, HTML and translation files with one engine, and fixes most of them automatically."
+          data-ar="«اتجاه» بيلاقي أخطاء الاتجاه والنص ثنائي الاتجاه في CSS وTailwind وJSX وHTML وملفات الترجمة بمحرّك واحد، وبيصلّح أغلبها تلقائياً."
+        >
+          Ittijah finds RTL and bidirectional-text bugs across CSS, Tailwind, JSX, HTML and
+          translation files with one engine, and fixes most of them automatically.
+        </p>
+        <div class="cta">
+          <span class="install"
+            ><span>npx ittijah .</span
+            ><button type="button" data-copy="npx ittijah .">copy</button></span
+          >
+          <a
+            class="btn btn-primary"
+            href="docs/getting-started.html"
+            data-en="Get started →"
+            data-ar="ابدأ ←"
+            >Get started →</a
+          >
+        </div>
+
+        <div class="terminal" aria-label="Example output">
+          <div class="terminal-bar"><i></i><i></i><i></i></div>
+          <!-- ittijah-disable -->
+          <pre><span class="t-dim">$</span> npx ittijah .
+
+  <span class="t-cy t-b">ittijah</span> <span class="t-dim">·</span> <span class="t-b">اتجاه</span>  <span class="t-dim">v0.1.0 — RTL &amp; bidi linter</span>
+
+  <span class="t-b">locales/ar.json</span>
+  <span class="t-dim">2:25</span>    <span class="t-red">✖ error</span>  <span class="t-dim">bidi-unsafe-string</span>
+          [neutral-before-ltr] "@ittijah" renders as "ittijah@". "@" is a neutral character
+          between RTL text and a Latin word … Insert U+200E LEFT-TO-RIGHT MARK before "@".
+    <span class="t-red">&gt;</span> <span class="t-dim">2 │</span>   "follow": "تابعنا على @ittijah",
+      <span class="t-dim">│</span>                         <span class="t-red">^^^^^^^^</span>
+
+  <span class="t-b">src/ProductCard.tsx</span>
+  <span class="t-dim">5:49</span>    <span class="t-red">✖ error</span>  <span class="t-dim">no-physical-properties ·</span> <span class="t-grn">fixable</span>
+          "pl-6" is a physical utility: it does not flip in RTL. Use "ps-6".
+  <span class="t-dim">13:17</span>   <span class="t-yel">▲ warn </span>  <span class="t-dim">directional-icons</span>
+          "ChevronRight" points the same way in both directions …
+
+  <span class="t-red">✖</span> <span class="t-b">26 problems</span> (<span class="t-red">19 errors</span>, <span class="t-yel">7 warnings</span>) <span class="t-dim">in 5 files (0.05s)</span>
+    <span class="t-grn">17 fixable with</span> <span class="t-b">--fix</span></pre>
+          <!-- ittijah-enable -->
+        </div>
+      </div>
+
+      <section id="bugs">
+        <div class="wrap">
+          <div class="section-head">
+            <h2
+              data-en="These bugs are rendered live by <em>your</em> browser"
+              data-ar="الأخطاء دي متعروضة حالاً بمتصفحك <em>إنت</em>"
+            >
+              These bugs are rendered live by <em>your</em> browser
+            </h2>
+            <p
+              data-en='Not screenshots. Each box below is a real <code>dir="rtl"</code> element. The left column is the code as most apps ship it; the right column is what Ittijah suggests.'
+              data-ar='مش صور. كل مربع هنا عنصر حقيقي <code>dir="rtl"</code>. العمود الأول الكود زي ما أغلب التطبيقات بتنزّله، والتاني اقتراح «اتجاه».'
+            >
+              Not screenshots. Each box below is a real <code>dir="rtl"</code> element. The left
+              column is the code as most apps ship it; the right column is what Ittijah suggests.
+            </p>
+          </div>
+          <!-- ittijah-disable -->
+          <div class="demo-row">
+            <div class="demo-cell">
+              <div class="demo-label bad">✖ <code>"تابعنا على @ittijah"</code></div>
+              <div class="demo-render" dir="rtl">تابعنا على @ittijah</div>
+              <div class="demo-caption">
+                The <code>@</code> jumps to the end: you see <code>ittijah@</code>.
+              </div>
+            </div>
+            <div class="demo-cell">
+              <div class="demo-label good">✓ LRM before <code>@</code></div>
+              <div class="demo-render" dir="rtl">تابعنا على &lrm;@ittijah</div>
+              <div class="demo-caption">
+                <code>U+200E</code> anchors the <code>@</code> to the handle.
+              </div>
+            </div>
+          </div>
+          <div class="demo-row">
+            <div class="demo-cell">
+              <div class="demo-label bad">✖ <code>"أتقن C++ في أسبوع"</code></div>
+              <div class="demo-render" dir="rtl">أتقن C++ في أسبوع</div>
+              <div class="demo-caption">Reads as <code>++C</code>.</div>
+            </div>
+            <div class="demo-cell">
+              <div class="demo-label good">✓ LRM after <code>++</code></div>
+              <div class="demo-render" dir="rtl">أتقن C++&lrm; في أسبوع</div>
+              <div class="demo-caption">Same characters, correct order.</div>
+            </div>
+          </div>
+          <div class="demo-row">
+            <div class="demo-cell">
+              <div class="demo-label bad">✖ <code>"اتصل بنا +20 100 123 4567"</code></div>
+              <div class="demo-render" dir="rtl">اتصل بنا +20 100 123 4567</div>
+              <div class="demo-caption">Digit groups reversed, <code>+</code> at the far end.</div>
+            </div>
+            <div class="demo-cell">
+              <div class="demo-label good">✓ isolated with LRI…PDI</div>
+              <div class="demo-render" dir="rtl">اتصل بنا &#x2066;+20 100 123 4567&#x2069;</div>
+              <div class="demo-caption">The number keeps its own direction.</div>
+            </div>
+          </div>
+          <div class="demo-row">
+            <div class="demo-cell">
+              <div class="demo-label bad">✖ <code>"درجة الحرارة -5 درجات"</code></div>
+              <div class="demo-render" dir="rtl">درجة الحرارة -5 درجات</div>
+              <div class="demo-caption">The minus sign lands after the number.</div>
+            </div>
+            <div class="demo-cell">
+              <div class="demo-label good">✓ isolated</div>
+              <div class="demo-render" dir="rtl">درجة الحرارة &#x2066;-5&#x2069; درجات</div>
+              <div class="demo-caption">Negative five, as written.</div>
+            </div>
+          </div>
+          <div class="demo-row">
+            <div class="demo-cell">
+              <div class="demo-label bad">
+                ✖ <code>&lt;input&gt;</code> without <code>dir</code>
+              </div>
+              <div dir="rtl">
+                <input
+                  class="preview"
+                  value="Thanks for the update!"
+                  aria-label="demo input"
+                  readonly
+                />
+              </div>
+              <div class="demo-caption">
+                English typed into an Arabic UI: <code>!</code> at the start.
+              </div>
+            </div>
+            <div class="demo-cell">
+              <div class="demo-label good">✓ <code>dir="auto"</code></div>
+              <div dir="rtl">
+                <input
+                  class="preview"
+                  dir="auto"
+                  value="Thanks for the update!"
+                  aria-label="demo input fixed"
+                  readonly
+                />
+              </div>
+              <div class="demo-caption">The field follows what the user types.</div>
+            </div>
+          </div>
+          <!-- ittijah-enable -->
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <div class="section-head">
+            <h2 data-en="Four rules. Every layer." data-ar="أربع قواعد. كل طبقة.">
+              Four rules. Every layer.
+            </h2>
+            <p
+              data-en="Each rule documents the real rendering bug it prevents, and was validated on open-source projects."
+              data-ar="كل قاعدة موثّق معاها الخطأ الحقيقي اللي بتمنعه، ومتجرّبة على مشاريع مفتوحة المصدر."
+            >
+              Each rule documents the real rendering bug it prevents, and was validated on
+              open-source projects.
+            </p>
+          </div>
+          <div class="grid grid-4">
+            <a class="card" href="rules/no-physical-properties.html"
+              ><span class="tag">no-physical-properties</span><span class="pill">--fix</span>
+              <h3 data-en="Physical → logical" data-ar="فيزيائي ← منطقي">Physical → logical</h3>
+              <p
+                data-en="margin-left, text-align: left, float, ml-4, rounded-l, style={{ marginLeft }}. Knows your Tailwind version and rtlcss."
+                data-ar="margin-left وtext-align: left وml-4 وrounded-l وstyle. بيعرف نسخة Tailwind وrtlcss."
+              >
+                margin-left, text-align: left, float, ml-4, rounded-l, style={{ marginLeft }}. Knows
+                your Tailwind version and rtlcss.
+              </p></a
+            >
+            <a class="card" href="rules/directional-icons.html"
+              ><span class="tag">directional-icons</span>
+              <h3 data-en="Arrows that point back" data-ar="أسهم بتشاور لورا">
+                Arrows that point back
+              </h3>
+              <p
+                data-en="ChevronRight, ArrowLeft, fa-arrow-right from lucide, heroicons, MUI, Tabler, Font Awesome… without an RTL flip."
+                data-ar="ChevronRight وArrowLeft وfa-arrow-right من lucide وheroicons وMUI وFont Awesome من غير قلب في RTL."
+              >
+                ChevronRight, ArrowLeft, fa-arrow-right from lucide, heroicons, MUI, Tabler, Font
+                Awesome… without an RTL flip.
+              </p></a
+            >
+            <a class="card" href="rules/bidi-unsafe-string.html"
+              ><span class="tag">bidi-unsafe-string</span>
+              <h3 data-en="Scrambled strings" data-ar="نصوص متلخبطة">Scrambled strings</h3>
+              <p
+                data-en="@handles, C++, signed numbers and phone numbers in JSON, ARB, YAML, PO, JS and JSX. Understands ICU, i18next, printf and Rails placeholders."
+                data-ar="المعرّفات وC++ والأرقام السالبة وأرقام التليفون في JSON وARB وYAML وPO وJS. بيفهم صيغ ICU وi18next وprintf."
+              >
+                @handles, C++, signed numbers and phone numbers in JSON, ARB, YAML, PO, JS and JSX.
+                Understands ICU, i18next, printf and Rails placeholders.
+              </p></a
+            >
+            <a class="card" href="rules/missing-dir-attribute.html"
+              ><span class="tag">missing-dir-attribute</span><span class="pill">--fix</span>
+              <h3 data-en="Missing direction" data-ar="اتجاه ناقص">Missing direction</h3>
+              <p
+                data-en='&lt;html lang="ar"&gt; without dir, dynamic lang with hardcoded dir, inputs and user comments without dir="auto".'
+                data-ar='&lt;html lang="ar"&gt; من غير dir، وحقول الإدخال وتعليقات المستخدمين من غير dir="auto".'
+              >
+                &lt;html lang="ar"&gt; without dir, dynamic lang with hardcoded dir, inputs and user
+                comments without dir="auto".
+              </p></a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section id="playground">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 data-en="Bidi playground" data-ar="جرّب بنفسك">Bidi playground</h2>
+            <p
+              data-en="Type an Arabic or Hebrew string. The analyzer below is the exact code the CLI runs, compiled for your browser."
+              data-ar="اكتب جملة عربي أو عبري. المحلّل اللي تحت هو نفس الكود اللي الأداة بتشغّله، متحوّل للمتصفح."
+            >
+              Type an Arabic or Hebrew string. The analyzer below is the exact code the CLI runs,
+              compiled for your browser.
+            </p>
+          </div>
+          <div class="playground">
+            <div class="card">
+              <label for="pg-input" class="demo-label" data-en="Your string" data-ar="النص بتاعك"
+                >Your string</label
+              >
+              <!-- ittijah-disable -- intentionally buggy sample text -->
+              <textarea id="pg-input" dir="auto" spellcheck="false">
+تابعنا على @ittijah وتعلّم C++ اليوم</textarea>
+              <!-- ittijah-enable -->
+              <div class="examples">
+                <button type="button" data-example="اتصل بنا على +20 100 123 4567">+20 100…</button>
+                <button type="button" data-example="درجة الحرارة -5 درجات">-5</button>
+                <button type="button" data-example="شغّل --fix لإصلاح المشاكل">--fix</button>
+                <button type="button" data-example="{name} علّق على منشورك.">{name} …</button>
+                <button type="button" data-example="الرصيد -{amount} ريال">-{amount}</button>
+                <button type="button" data-example="תעשו לייק ל-Disney+ עכשיו">Disney+</button>
+              </div>
+              <label class="check"
+                ><input id="pg-leading" type="checkbox" />
+                <span
+                  data-en="Check <code>leadingLtr</code> (notifications, titles)"
+                  data-ar="فحص <code>leadingLtr</code> (الإشعارات والعناوين)"
+                  >Check <code>leadingLtr</code> (notifications, titles)</span
+                ></label
+              >
+            </div>
+            <div class="card">
+              <div
+                class="demo-label bad"
+                data-en="✖ As written (dir=rtl)"
+                data-ar="✖ زي ما هو مكتوب (dir=rtl)"
+              >
+                ✖ As written (dir=rtl)
+              </div>
+              <div id="pg-before" class="preview" dir="rtl"></div>
+              <div
+                class="demo-label good"
+                style="margin-block-start: 14px"
+                data-en="✓ With Ittijah's marks"
+                data-ar="✓ بعد علامات «اتجاه»"
+              >
+                ✓ With Ittijah's marks
+              </div>
+              <div id="pg-after" class="preview" dir="rtl"></div>
+              <div
+                class="demo-label"
+                style="margin-block-start: 14px; color: var(--muted)"
+                data-en="Findings"
+                data-ar="النتائج"
+              >
+                Findings
+              </div>
+              <ul id="pg-findings" class="findings"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <div class="section-head">
+            <h2 data-en="Honest numbers" data-ar="أرقام بصراحة">Honest numbers</h2>
+            <p
+              data-en="Five real projects, 12,750 files, two rounds of manual review. The first round failed the 20% bar, so the rules changed before anything else was built."
+              data-ar="خمس مشاريع حقيقية، و12,750 ملف، وجولتين مراجعة يدوية. الجولة الأولى فشلت في حد الـ 20%، فالقواعد اتغيّرت قبل ما نبني أي حاجة تانية."
+            >
+              Five real projects, 12,750 files, two rounds of manual review. The first round failed
+              the 20% bar, so the rules changed before anything else was built.
+            </p>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <b class="t-red">40%</b
+              ><span data-en="false positives, run 1" data-ar="إنذارات كاذبة، الجولة 1"
+                >false positives, run 1</span
+              >
+            </div>
+            <div class="stat">
+              <b class="t-grn">6.7%</b
+              ><span data-en="run 2, fresh sample" data-ar="الجولة 2، عيّنة جديدة"
+                >run 2, fresh sample</span
+              >
+            </div>
+            <div class="stat">
+              <b>3.7 s</b
+              ><span data-en="for 5,000 files" data-ar="لـ 5,000 ملف">for 5,000 files</span>
+            </div>
+            <div class="stat">
+              <b>223</b
+              ><span data-en="tests &amp; fixtures" data-ar="اختبار">tests &amp; fixtures</span>
+            </div>
+          </div>
+          <p style="text-align: center; margin-block-start: 24px">
+            <a
+              href="docs/validation.html"
+              data-en="Read the validation report, including what it does not show →"
+              data-ar="اقرا تقرير التحقق، ومعاه اللي مش بيوضّحه ←"
+              >Read the validation report, including what it does not show →</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <div class="section-head">
+            <h2 data-en="Fits your workflow" data-ar="بيدخل في شغلك على طول">Fits your workflow</h2>
+          </div>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>CLI</h3>
+              <pre class="code"><span class="c"># scan, fix, report</span>
+npx ittijah .
+npx ittijah src --fix
+npx ittijah . --format sarif -o ittijah.sarif
+npx ittijah --explain bidi-unsafe-string</pre>
+            </div>
+            <div class="card">
+              <h3>GitHub Action</h3>
+              <pre
+                class="code"
+              ><span class="k">permissions</span>: { contents: read, security-events: write }
+<span class="k">steps</span>:
+  - uses: actions/checkout@v4
+  - uses: <span class="s">fernata-dev/ittijah@v0</span>
+<span class="c"># findings appear inline on the PR (SARIF)</span></pre>
+            </div>
+            <div class="card">
+              <h3>ESLint</h3>
+              <pre
+                class="code"
+              ><span class="k">import</span> ittijah <span class="k">from</span> <span class="s">"eslint-plugin-ittijah"</span>;
+<span class="k">export default</span> [ittijah.configs.recommended];</pre>
+            </div>
+            <div class="card">
+              <h3>ittijah.config.json</h3>
+              <pre class="code">{
+  <span class="s">"$schema"</span>: "https://unpkg.com/@ittijah/core/schema/…",
+  <span class="s">"rules"</span>: { "directional-icons": ["warn", { "iconSources": ["@/icons"] }] },
+  <span class="s">"settings"</span>: { "tailwind": "auto", "buildTimeFlip": "auto" }
+}</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>ittijah · اتجاه: MIT</span>
+        <span
+          ><a href="docs/getting-started.html">Docs</a> ·
+          <a href="docs/design-decisions.html">Design decisions</a> ·
+          <a href="https://github.com/fernata-dev/ittijah">GitHub</a></span
+        >
+      </div>
+    </footer>
+
+    <script src="assets/playground.js"></script>
+    <script src="assets/site.js"></script>
+  </body>
+</html>

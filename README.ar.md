@@ -31,12 +31,12 @@ npx ittijah .
 
 ## القواعد
 
-| القاعدة | بتمسك إيه | الافتراضي | إصلاح تلقائي |
-|---|---|---|---|
-| `no-physical-properties` | ‏`margin-left` و‏`text-align: left` و‏`ml-4` و‏`rounded-l` و‏`style={{ marginLeft }}` | error | ✅ |
-| `directional-icons` | ‏`<ChevronRight />` و‏`fa-arrow-right` من غير قلب في RTL | warn | 💡 |
-| `bidi-unsafe-string` | ‏`@user` ← ‎`user@`‎، و‏`C++` ← ‎`++C`‎، و‏`-5` ← ‎`5-`‎، وأرقام التليفون | error | 💡 |
-| `missing-dir-attribute` | ‏`<html lang="ar">` من غير `dir`، وحقول إدخال ومحتوى مستخدمين من غير `dir="auto"` | warn | ✅ |
+| القاعدة                  | بتمسك إيه                                                                             | الافتراضي | إصلاح تلقائي |
+| ------------------------ | ------------------------------------------------------------------------------------- | --------- | ------------ |
+| `no-physical-properties` | ‏`margin-left` و‏`text-align: left` و‏`ml-4` و‏`rounded-l` و‏`style={{ marginLeft }}` | error     | ✅           |
+| `directional-icons`      | ‏`<ChevronRight />` و‏`fa-arrow-right` من غير قلب في RTL                              | warn      | 💡           |
+| `bidi-unsafe-string`     | ‏`@user` ← ‎`user@`‎، و‏`C++` ← ‎`++C`‎، و‏`-5` ← ‎`5-`‎، وأرقام التليفون             | error     | 💡           |
+| `missing-dir-attribute`  | ‏`<html lang="ar">` من غير `dir`، وحقول إدخال ومحتوى مستخدمين من غير `dir="auto"`     | warn      | ✅           |
 
 كل قاعدة ليها صفحة بتشرح الخطأ الحقيقي اللي بيحصل في العرض، بأمثلة صح وغلط.
 
@@ -68,8 +68,10 @@ npx ittijah --init            # إنشاء ittijah.config.json
 </div>
 
 ```tsx
-{/* ittijah-disable-next-line no-physical-properties -- محور الرسم البياني فيزيائي عمداً */}
-<div className="ml-4" />
+{
+  /* ittijah-disable-next-line no-physical-properties -- محور الرسم البياني فيزيائي عمداً */
+}
+<div className="ml-4" />;
 ```
 
 <div dir="rtl">

@@ -10,7 +10,12 @@
     "setting": {
       "oneOf": [
         { "$ref": "#/definitions/severity" },
-        { "type": "array", "items": [{ "$ref": "#/definitions/severity" }, { "type": "object" }], "minItems": 1, "maxItems": 2 }
+        {
+          "type": "array",
+          "items": [{ "$ref": "#/definitions/severity" }, { "type": "object" }],
+          "minItems": 1,
+          "maxItems": 2
+        }
       ]
     },
     "tristate": { "oneOf": [{ "const": "auto" }, { "type": "boolean" }] },
@@ -30,9 +35,21 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "tailwind": { "type": "boolean", "default": true, "description": "Check Tailwind utility classes." },
-                    "styleObjects": { "type": "boolean", "default": true, "description": "Check React style={{…}} objects." },
-                    "ignoreProperties": { "type": "array", "items": { "type": "string" }, "description": "Properties / Tailwind families to ignore, e.g. [\"text-align\", \"rounded\"]." }
+                    "tailwind": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Check Tailwind utility classes."
+                    },
+                    "styleObjects": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Check React style={{…}} objects."
+                    },
+                    "ignoreProperties": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Properties / Tailwind families to ignore, e.g. [\"text-align\", \"rounded\"]."
+                    }
                   }
                 }
               ]
@@ -51,9 +68,21 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "icons": { "type": "array", "items": { "type": "string" }, "description": "Extra icon names treated as directional." },
-                    "ignore": { "type": "array", "items": { "type": "string" }, "description": "Icon names never reported." },
-                    "iconSources": { "type": "array", "items": { "type": "string" }, "description": "Extra modules exporting icon components." }
+                    "icons": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Extra icon names treated as directional."
+                    },
+                    "ignore": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Icon names never reported."
+                    },
+                    "iconSources": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Extra modules exporting icon components."
+                    }
                   }
                 }
               ]
@@ -72,8 +101,16 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "leadingLtr": { "type": "boolean", "default": false, "description": "Report RTL strings starting with Latin text or a placeholder (breaks in notifications, <title>, e-mail subjects, dir=auto)." },
-                    "ignoreKeys": { "type": "array", "items": { "type": "string" }, "description": "Translation key globs to skip, e.g. \"legal.*\"." },
+                    "leadingLtr": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Report RTL strings starting with Latin text or a placeholder (breaks in notifications, <title>, e-mail subjects, dir=auto)."
+                    },
+                    "ignoreKeys": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Translation key globs to skip, e.g. \"legal.*\"."
+                    },
                     "checks": {
                       "type": "object",
                       "additionalProperties": false,
@@ -118,15 +155,32 @@
   "properties": {
     "$schema": { "type": "string" },
     "rules": { "$ref": "#/definitions/rules" },
-    "ignore": { "type": "array", "items": { "type": "string" }, "description": "Globs (relative to this file) of files to skip, in addition to .gitignore." },
+    "ignore": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Globs (relative to this file) of files to skip, in addition to .gitignore."
+    },
     "settings": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "tailwind": { "$ref": "#/definitions/tristate", "description": "Treat class names as Tailwind utilities. \"auto\" = tailwindcss found in package.json." },
-        "buildTimeFlip": { "$ref": "#/definitions/tristate", "description": "CSS is flipped at build time (rtlcss…). \"auto\" = detected from package.json." },
-        "reactNative": { "$ref": "#/definitions/tristate", "description": "React Native swaps left/right itself. \"auto\" = detected." },
-        "iconSources": { "type": "array", "items": { "type": "string" }, "description": "Modules exporting icon components, e.g. \"@/components/icons\"." }
+        "tailwind": {
+          "$ref": "#/definitions/tristate",
+          "description": "Treat class names as Tailwind utilities. \"auto\" = tailwindcss found in package.json."
+        },
+        "buildTimeFlip": {
+          "$ref": "#/definitions/tristate",
+          "description": "CSS is flipped at build time (rtlcss…). \"auto\" = detected from package.json."
+        },
+        "reactNative": {
+          "$ref": "#/definitions/tristate",
+          "description": "React Native swaps left/right itself. \"auto\" = detected."
+        },
+        "iconSources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Modules exporting icon components, e.g. \"@/components/icons\"."
+        }
       }
     },
     "overrides": {
