@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        node: [20, 22, 24]
+        include:
+          - os: windows-latest
+            node: 22
+          - os: macos-latest
+            node: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - name: Benchmark (5k files < 10 s)
+        if: matrix.os == 'ubuntu-latest'
+        run: node scripts/bench.mjs 5000
+      - name: Dogfood — lint the website and demo with Ittijah itself
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          node packages/cli/bin/ittijah.js website --max-warnings 0
+          node packages/cli/bin/ittijah.js examples/demo --format json > /dev/null || test $? -eq 1
