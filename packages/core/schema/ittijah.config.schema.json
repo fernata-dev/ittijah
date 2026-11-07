@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://unpkg.com/@ittijah/core/schema/ittijah.config.schema.json",
+  "title": "Ittijah configuration",
+  "description": "Configuration for Ittijah, the RTL / bidirectional-text linter (ittijah.config.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "severity": { "type": "string", "enum": ["off", "warn", "error"] },
+    "setting": {
+      "oneOf": [
+        { "$ref": "#/definitions/severity" },
+        { "type": "array", "items": [{ "$ref": "#/definitions/severity" }, { "type": "object" }], "minItems": 1, "maxItems": 2 }
+      ]
+    },
+    "tristate": { "oneOf": [{ "const": "auto" }, { "type": "boolean" }] },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "no-physical-properties": {
+          "description": "Physical left/right CSS properties, values, Tailwind utilities and React style keys.",
+          "oneOf": [
+            { "$ref": "#/definitions/severity" },
+            {
+              "type": "array",
+              "items": [
+                { "$ref": "#/definitions/severity" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "tailwind": { "type": "boolean", "default": true, "description": "Check Tailwind utility classes." },
+                    "styleObjects": { "type": "boolean", "default": true, "description": "Check React style={{…}} objects." },
+                    "ignoreProperties": { "type": "array", "items": { "type": "string" }, "description": "Properties / Tailwind families to ignore, e.g. [\"text-align\", \"rounded\"]." }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "directional-icons": {
+          "description": "Arrow/chevron icons without an RTL flip.",
+          "oneOf": [
+            { "$ref": "#/definitions/severity" },
+            {
+              "type": "array",
+              "items": [
+                { "$ref": "#/definitions/severity" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "icons": { "type": "array", "items": { "type": "string" }, "description": "Extra icon names treated as directional." },
+                    "ignore": { "type": "array", "items": { "type": "string" }, "description": "Icon names never reported." },
+                    "iconSources": { "type": "array", "items": { "type": "string" }, "description": "Extra modules exporting icon components." }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "bidi-unsafe-string": {
+          "description": "Strings whose neutral characters are reordered by the Unicode Bidirectional Algorithm.",
+          "oneOf": [
+            { "$ref": "#/definitions/severity" },
+            {
+              "type": "array",
+              "items": [
+                { "$ref": "#/definitions/severity" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "leadingLtr": { "type": "boolean", "default": false, "description": "Report RTL strings starting with Latin text or a placeholder (breaks in notifications, <title>, e-mail subjects, dir=auto)." },
+                    "ignoreKeys": { "type": "array", "items": { "type": "string" }, "description": "Translation key globs to skip, e.g. \"legal.*\"." },
+                    "checks": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "leading-ltr": { "type": "boolean" },
+                        "neutral-before-ltr": { "type": "boolean" },
+                        "neutral-after-ltr": { "type": "boolean" },
+                        "signed-number": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "missing-dir-attribute": {
+          "description": "<html> without lang/dir; inputs and user content without dir=\"auto\".",
+          "oneOf": [
+            { "$ref": "#/definitions/severity" },
+            {
+              "type": "array",
+              "items": [
+                { "$ref": "#/definitions/severity" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "checkHtml": { "type": "boolean", "default": true },
+                    "requireLang": { "type": "boolean", "default": true },
+                    "checkInputs": { "type": "boolean", "default": true },
+                    "checkUserContent": { "type": "boolean", "default": true }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "rules": { "$ref": "#/definitions/rules" },
+    "ignore": { "type": "array", "items": { "type": "string" }, "description": "Globs (relative to this file) of files to skip, in addition to .gitignore." },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tailwind": { "$ref": "#/definitions/tristate", "description": "Treat class names as Tailwind utilities. \"auto\" = tailwindcss found in package.json." },
+        "buildTimeFlip": { "$ref": "#/definitions/tristate", "description": "CSS is flipped at build time (rtlcss…). \"auto\" = detected from package.json." },
+        "reactNative": { "$ref": "#/definitions/tristate", "description": "React Native swaps left/right itself. \"auto\" = detected." },
+        "iconSources": { "type": "array", "items": { "type": "string" }, "description": "Modules exporting icon components, e.g. \"@/components/icons\"." }
+      }
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["files"],
+        "additionalProperties": false,
+        "properties": {
+          "files": { "type": "array", "items": { "type": "string" } },
+          "rules": { "$ref": "#/definitions/rules" }
+        }
+      }
+    }
+  }
+}

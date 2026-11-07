@@ -50,8 +50,9 @@ export function isRtlLocalePath(filePath: string): boolean {
   const base = parts.pop() ?? "";
   const stem = base.replace(/\.(json|arb|ya?ml|po)$/, "");
   const candidates = [stem, ...stem.split(/[.]/), ...parts.slice(-3)];
-  // app_ar.arb, messages.ar.json, strings-he.json
-  const m = stem.match(/(?:^|[._-])([a-z]{2,3}(?:[-_][a-z]{2,4})?)$/);
-  if (m) candidates.push(m[1]!);
+  // app_ar.arb, messages.ar.json, strings-he.json, app_fa_IR.arb
+  const segs = stem.split(/[._-]/);
+  candidates.push(segs[segs.length - 1]!);
+  if (segs.length >= 2) candidates.push(`${segs[segs.length - 2]}-${segs[segs.length - 1]}`);
   return candidates.some((c) => /^[a-z]{2,3}([-_][a-z0-9]{2,4})?$/.test(c) && isRtlLang(c));
 }
